@@ -1,0 +1,26 @@
+01 02 2016 : 
+- @ Fait 
+# Formulaire
+$Inscription
+Creation du formulaire d'inscription
+    * html pur
+    * link php
+    
+$Authentification
+Modification du formulaire de connexion 
+    * Modification des ID des variables
+    * Ajout des liens vers le fichier d'inscription
+
+ 
+        
+- @ A faire:
+# Formulaire
+$Inscription
+    * Test du javascript de l'adresse mail (expression reguliere pour la securite)
+    * Envoi de mail de confirmation ?
+    
+    
+    
+Deconnexion
+   
+    
