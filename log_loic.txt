@@ -1,4 +1,30 @@
-01 02 2016 : 
+01 02 2016 - soiree : 
+- @ Fait 
+# Carte 
+Affichage de la carte
+Affichage du brouillard de guerre centré sur la position de l'utilisateur
+Affichage du marqueur utilisateur
+Coordonnees mises à jour toutes les 8 secondes
+Gestion des superpositions
+Fonction pour effectuer des requetes ajax
+Fonction pour ajouter des marqueurs
+Fonction pour supprimer des marqueurs
+
+- @ A Faire
+# Carte
+Ajout position autres utilisateurs
+
+# Formulaire
+$Inscription
+    * Test du javascript de l'adresse mail (expression reguliere pour la securite)
+    * Envoi de mail de confirmation ?
+        
+Deconnexion
+
+
+
+==============================================
+01 02 2016 - journee: 
 - @ Fait 
 # Formulaire
 $Inscription
@@ -18,9 +44,7 @@ Modification du formulaire de connexion
 $Inscription
     * Test du javascript de l'adresse mail (expression reguliere pour la securite)
     * Envoi de mail de confirmation ?
-    
-    
-    
+        
 Deconnexion
    
     

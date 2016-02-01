@@ -10,10 +10,10 @@
     <body>
     
         <div id="map"></div>
-        
+        <div id="infoposition"></div>
         
         <script src="http://maps.googleapis.com/maps/api/js"></script>
-        <script src="test_fog_war.js"></script>
+        <script src="google.js"></script>
   </body>
 </html>
 
