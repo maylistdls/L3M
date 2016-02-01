@@ -1,7 +1,7 @@
 <?php
 session_start();
-include('../include/connect.inc.php');
-include('../include/errorManager.inc.php');
+include('connect.inc.php');
+include('errorManager.inc.php');
 // vérification des données en entrée
 if (!(isset($_POST['login']) || empty($_POST['login'])))
   dieErrorJson('login absent');
@@ -42,5 +42,5 @@ $data['encours']=null;
 $_SESSION['login']=$login ;
 
 checkDieErrorJson();
-include('../include/parties.inc.php');
+// include('../include/parties.inc.php');
 ?>
