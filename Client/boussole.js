@@ -1,26 +1,23 @@
 document.addEventListener("DOMContentLoaded", function(event) {
 
 	if (window.DeviceOrientationEvent) {
-  document.getElementById("notice").innerHTML = "Gaaf! De DeviceOrientationEvent API word door dit toestel ondersteund.";
+  document.getElementById("notice").innerHTML = "Cool! L'API DeviceOrientationEvent est prise en charge par ce navigateur.";
   window.addEventListener('deviceorientation', function(eventData) {
-  	// gamma: Tilting the device from left to right. Tilting the device to the right will result in a positive value.
-    // gamma: Het kantelen van links naar rechts in graden. Naar rechts kantelen zal een positieve waarde geven.
+	  
+  	// gamma: Incline l'appareil de gauche à droite. Incliner l'appareil vers la droite donnera lieu à une valeur positive.
     var tiltLR = eventData.gamma;
 
-    // beta: Tilting the device from the front to the back. Tilting the device to the front will result in a positive value.
-    // beta: Het kantelen van voor naar achteren in graden. Naar voren kantelen zal een positieve waarde geven.
+    // beta: Incline l'appareil de l'avant vers l'arrière. Incliner l'appareil vers l'avant se traduira par une valeur positive.
     var tiltFB = eventData.beta;
 
-    // alpha: The direction the compass of the device aims to in degrees.
-    // alpha: De richting waarin de kompas van het apparaat heen wijst in graden.
+    // alpha: La direction de la boussole du dispositif est en degrés.
     var dir = eventData.alpha
 
-    // Call the function to use the data on the page.
-    // Roep de functie op om de data op de pagina te gebruiken.
+    // Appelle la fonction qui utilise les données de la page
     deviceOrientationHandler(tiltLR, tiltFB, dir);
   }, false);
 } else {
-  document.getElementById("notice").innerHTML = "Helaas. De DeviceOrientationEvent API word niet door dit toestel ondersteund."
+  document.getElementById("notice").innerHTML = "Désolé. L'API DeviceOrientationEvent n'est pas prise en charge par ce navigateur."
 };
 
     function deviceOrientationHandler(tiltLR, tiltFB, dir) {
@@ -28,17 +25,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
       document.getElementById("tiltFB").innerHTML = Math.ceil(tiltFB);
       document.getElementById("direction").innerHTML = Math.ceil(dir);
       
-      // Rotate the disc of the compass.
-      // Laat de kompas schijf draaien.
-      var compassDisc = document.getElementById("fleche");
+      // Rotation de la flèche du compas
+      var compassDisc = document.getElementById("map");
       compassDisc.style.webkitTransform = "rotate("+ -dir +"deg)";
-      compassDisc.style.MozTransform = "rotate("+ -dir +"deg)";
-      compassDisc.style.transform = "rotate("+ -dir +"deg)";
+      compassDisc.style.MozTransform = "rotate("+ -dir +"deg)"; // préfixe pour le navigateur Mozilla
+      compassDisc.style.transform = "rotate("+ -dir +"deg)"; // préfixe pour les autres navigateurs
       
-      var compassDisc = document.getElementById("compassDiscImg");
-      compassDisc.style.webkitTransform = "rotate("+ -dir +"deg)";
-      compassDisc.style.MozTransform = "rotate("+ -dir +"deg)";
-      compassDisc.style.transform = "rotate("+ -dir +"deg)";
     }
 
 });

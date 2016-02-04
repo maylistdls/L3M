@@ -4,14 +4,9 @@ var map = new google.maps.Map(document.getElementById("map"),
         center:new google.maps.LatLng(0,0),
         zoom:18,
     });
-    
-    
-    
+       
 //Chargement des tuiles (donnees google - vue satellite)
 map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
-
-
-
 
 //Variables globales
 var listeMarker = []; //Pour pouvoir supprimer les marqueurs
@@ -30,8 +25,7 @@ var outerbounds = [ // covers the (mercator projection) world
         new google.maps.LatLng(-85,180),
         new google.maps.LatLng(0,180),
         new google.maps.LatLng(85,180)];
-
-
+		
 
 /*
 // A decommenter si on a besoin de requete ajax
