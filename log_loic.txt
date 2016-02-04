@@ -1,3 +1,22 @@
+02 02 2016 - apres-midi
+- @ Fait 
+# Boussole 
+Un prototype de boussole a été fait. Cette boussole tourne sur téléphone Android (en tous cas le mien) lorsque le telephone est à la verticale ou legerement incliné.
+
+- @ A faire 
+# Carte
+Ajout position autres utilisateurs
+Faire tourner la carte selon la boussole
+
+# Formulaire
+$Inscription
+    * Test du javascript de l'adresse mail (expression reguliere pour la securite)
+    * Envoi de mail de confirmation ?
+        
+Deconnexion
+
+
+
 01 02 2016 - soiree : 
 - @ Fait 
 # Carte 
@@ -24,7 +43,7 @@ Deconnexion
 
 
 ==============================================
-01 02 2016 - journee: 
+01 02 2016 - apres-midi: 
 - @ Fait 
 # Formulaire
 $Inscription
