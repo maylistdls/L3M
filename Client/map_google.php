@@ -14,7 +14,7 @@
         <div id="map"></div>
         <div id="infoposition"></div>
         
-        <script src="http://maps.googleapis.com/maps/api/js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAc7cYRo_hs_o3ShN0OLazfdUyUOcFO0Po&signed_in=true&callback=initMap"></script>
         <script src="google.js"></script>
 		<script src="boussole.js"></script>
 		

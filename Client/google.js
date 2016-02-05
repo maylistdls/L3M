@@ -1,11 +1,22 @@
 //Creation de l'objet map
 var map = new google.maps.Map(document.getElementById("map"),
-    {
-        center:new google.maps.LatLng(0,0),
-        zoom:18,
-    });
-       
-//Chargement des tuiles (donnees google - vue satellite)
+	{
+		center:new google.maps.LatLng(0,0),
+		zoom:18,
+		
+	});
+
+	
+// Pour passer en vue satellite 
+//map.setMapTypeId(google.maps.MapTypeId.SATELLITE);	
+
+// Pour passer en vue hybride 
+//map.setMapTypeId(google.maps.MapTypeId.HYBRID);	
+
+// Pour passer en vue TERRAIN
+//map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
+
+// Chargement des tuiles (donnees google - vue satellite)
 map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
 
 //Variables globales
@@ -165,7 +176,7 @@ var superposition = 0;
 
 // Fonction de callback en cas de succès
 function maPosition(position) {
-    console.log(position.coords.latitude );
+    //console.log(position.coords.latitude );
  
     var infopos = "Position déterminée :\n";
     infopos += "Latitude : "+position.coords.latitude +"\n";
@@ -182,8 +193,23 @@ function maPosition(position) {
     // Permet de centrer la carte sur la position latlng
     map.panTo(latlng);
     
-    
-    // options for the polygon
+	// Autre moyen de faire un cercle avec l'API google maps
+	// Problème : au bout de 3-4 secondes, l'opacité change pour devenir toute rouge et on ne voit plus la carte... 
+	// Je ne sais pas comment çà se fait..
+    var circleOptions = {
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#FF0000',
+            fillOpacity: 0.5,
+            map: map,
+            center: latlng,
+            radius: 20
+	};
+	
+	var circle = new google.maps.Circle(circleOptions);
+			
+    // Options du cercle 1 
     var fogWar = {
       strokeColor: '#444444',
       strokeOpacity: 0.1,
@@ -193,9 +219,23 @@ function maPosition(position) {
       map: map,
       paths: [outerbounds,drawCircle(latlng,10,-1)]
     };
+	
+	// Options du cercle 2 
+    // var fogWar2 = {
+      // strokeColor: '#444444',
+      // strokeOpacity: 0.1,
+      // strokeWeight: 0,
+      // fillColor: '#444444',
+      // fillOpacity: 0.5,
+      // map: map,
+      // paths: [outerbounds,drawCircle(latlng,20,-1)]
+    // };
     
-    // Add the circle to the map
+    // Ajout du cercle 1 à la carte
     fogWarCircle = new google.maps.Polygon(fogWar);
+	
+	// Ajout du cercle 2 à la carte
+    // fogWarCircle2 = new google.maps.Polygon(fogWar2);
     
     // Marqueur position utilisateur
     var positionMarker = new google.maps.Circle({
@@ -208,7 +248,6 @@ function maPosition(position) {
         center: latlng,
         radius: 5
     });
-    
     
     if (superposition==1)
     {
@@ -232,7 +271,8 @@ function maPosition(position) {
     marker.setMap(map);
     
     
-    window.setTimeout(function(){navigator.geolocation.getCurrentPosition(maPosition,errorCallback,{enableHighAccuracy : true, timeout:100000, maximumAge:100000});},8000);
+    
+	window.setTimeout(function(){navigator.geolocation.getCurrentPosition(maPosition,errorCallback,{enableHighAccuracy : true, timeout:100000, maximumAge:100000});},8000);
  
 }
 
