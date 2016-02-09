@@ -135,6 +135,9 @@ function markerDelAgain()
 
 
 
+
+
+
 //Fog of war
 function drawCircle(point, radius, dir) 
 { 
@@ -165,6 +168,59 @@ function drawCircle(point, radius, dir)
     
     
     
+function drawMultiplesCircles(tableau)
+{
+    var radius = 10;
+    var listeCircles=new Array();
+    var sortie = new Array();
+    
+    // Creation de tous les cercles 
+    for (var i=0; i<tableau.length; i++)
+    {
+        listeCircles.push(new google.maps.Circle({
+            center: tableau[i],
+            radius:radius
+        }));
+    }
+    
+    // Parcours de chaque coordonnees des delimiteurs de chacun des cercles
+    for (var i=0; i<tableau.length; i++) 
+    {
+        var extp = drawCircle(tableau[i],10,-1);
+        
+        for (var j=0; j<extp.length; j++)
+        {
+            // Teste pour chacun de ces points s'il est dans un des polygones. Si ce n'est pas le cas, on l'ajoute à la liste.
+            var estDedans=0;
+            for (var k=0; k<listeCircles.length; k++) 
+            {
+                console.log(extp[j]);
+                console.log(listeCircles[j]);
+                if (typeof listeCircles[j] !== "undefined")
+                {
+                    if (listeCircles[j].getBounds().contains(extp[j])==true)
+                    {
+                        estDedans=1;
+                        break;
+                    }
+                }
+                
+                    
+            }
+            if (!estDedans)
+            {
+                sortie.push(extp[j]);
+            }
+        }            
+        
+    }
+    
+    
+    console.log(sortie);
+    
+    return sortie;
+}    
+    
 //Recuperation position utilisateur
 var latlng;
 var orientation;
@@ -188,26 +244,17 @@ function maPosition(position) {
     
     // Un nouvel objet LatLng pour Google Maps avec les paramètres de position
     latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    console.log(position.coords.latitude);
+    latlng2 = new google.maps.LatLng(position.coords.latitude+1, position.coords.longitude+1);
+    latlng3 = new google.maps.LatLng(position.coords.latitude+0.1, position.coords.longitude+0.1);
 
-    
+    var listeCircle = new Array();
+    listeCircle.push(latlng);
+    listeCircle.push(latlng2);
+    listeCircle.push(latlng3);
     // Permet de centrer la carte sur la position latlng
     map.panTo(latlng);
-    
-	// Autre moyen de faire un cercle avec l'API google maps
-	// Problème : au bout de 3-4 secondes, l'opacité change pour devenir toute rouge et on ne voit plus la carte... 
-	// Je ne sais pas comment çà se fait..
-    var circleOptions = {
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: '#FF0000',
-            fillOpacity: 0.5,
-            map: map,
-            center: latlng,
-            radius: 20
-	};
 	
-	var circle = new google.maps.Circle(circleOptions);
 			
     // Options du cercle 1 
     var fogWar = {
@@ -217,8 +264,9 @@ function maPosition(position) {
       fillColor: '#444444',
       fillOpacity: 0.5,
       map: map,
-      paths: [outerbounds,drawCircle(latlng,10,-1)]
+      paths: [outerbounds,drawMultiplesCircles(listeCircle)]
     };
+    
 	
 	// Options du cercle 2 
     // var fogWar2 = {
