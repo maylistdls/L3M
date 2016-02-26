@@ -21,6 +21,13 @@ Chrome, Firefox, IE, Safari, and Opera all return appCodeName "Mozilla".
 
 
 
+Ajout d'un menu responsive pour la page principale
+
+Combinaison entre la carte et la boussole. Probleme de lisibilité (ecritures qui pivotent egalement)
+
+
+
+
 20 02 2016 - 26 02 2016 
 Reflexion sur la gestion de la synchronisation de l'envoi de données... En PHP cela semble compromis ... 
 

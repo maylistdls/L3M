@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+        <title>
+			Carte Google
+        </title>
+		<link rel="stylesheet" href="boussole.css" />
+    </head>
+    <body>
+    <h1> Carte tournante avec Boussole !</h1>
+
+	<div id="notice"></div>
+    <div id="empty-div">
+        <div class="compass">
+            <div class="arrow" id="fleche"></div>
+            <div class="disc" id="compassDiscImg"></div>
+        </div>
+    </div>
+
+	<div class="orientation-data">
+		<div>Tilt-back : <span id="tiltFB"></span></div>
+		<div>Inclinaison gauche - droite : <span id="tiltLR"></span></div>
+		<div>Orientation : <span id="direction"></span></div>
+	</div>
+    
+    <div id="map"></div>
+    <script src="google.js"></script>
+    <script src="boussole.js"></script>
+      </body>
+</html>
