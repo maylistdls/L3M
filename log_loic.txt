@@ -1,3 +1,35 @@
+26 02 2016 
+Recherche sur le bug de la boussole : Le probleme concernait la boussole qui fonctionnait differement selon les appareils utilisés. Effectivement, un site internet relate ce phénomene et constate que : 
+So, for example, testing the alpha property on some of the major mobile browsers yields the following table, based on work by AJFischer:
+                            Android	    iOS	            Opera Mobile    Firefox Mobile	Chrome for Android
+0 deg	                    West(270)   East(90)	    North(0)	    North(0)	    North(0)
+Positive rotation direction	CW	        CCW	            CW	            CCW	            CW
+Table illustrating some discrepencies across alpha(compass) implementations (C/CW: Counter/Clockwise)
+En gros l'angle alpha qu'on récupere dépend du navigateur + du systeme d'exploitation utilisé et l'origine varie en fonction de cela. Sur chrome pour android, lorsque alpha vaut 0, cela signifie qu'on est orienté vers le nord alors que sur ios il vaut 0 quand on est orienté vers l'est. Second probleme avec ces methodes d'orientation, c'est qu'en plus sur chrome par exemple, ça tourne dans le sens horaire et sur IOS c'est dans le sens anti horaire.
+
+Il y a visiblement des bibliotheques qui permettent de detecter le navigateur utilisé et donc de faire differentes actions selon le navigateur utilisé.
+http://www.misfu.com/static/Javascript/detect.html
+Sauf que ça ne marche pas et c'est meme déconseillé...
+De plus, ces bibliotheques permettent de distinguer si le navigateur est IE ou un autre, mais ne permet pas visiblement de detecter chacun des navigateurs comme on l'aimerait : 
+http://www.w3schools.com/js/js_window_navigator.asp -> 
+"
+Did you know?
+IE11, Chrome, Firefox, and Safari return appName "Netscape".
+Chrome, Firefox, IE, Safari, and Opera all return appCodeName "Mozilla".
+"
+
+
+
+
+20 02 2016 - 26 02 2016 
+Reflexion sur la gestion de la synchronisation de l'envoi de données... En PHP cela semble compromis ... 
+
+08 02 2016 - 18 02 2016 
+Recherche de solution au probleme de superposition des cercles de zone de visibilité. Aucune solution qui fonctionne n'a été trouvée jusqu'à présent... Deux cercles qui ne s'intersectent pas s'affichent correctement. Cependant, la zone d'intersection de deux cercles devient elle meme une zone de brouillard...
+
+
+
+
 02 02 2016 - apres-midi
 - @ Fait 
 # Boussole 
