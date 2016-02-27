@@ -1,3 +1,7 @@
+27 02 2016 soirée
+Generation d'une fonction assaut() au fichier fonctionnalite.js pour envoyer au serveur une demande d'assaut.
+
+
 26 02 2016 
 Recherche sur le bug de la boussole : Le probleme concernait la boussole qui fonctionnait differement selon les appareils utilisés. Effectivement, un site internet relate ce phénomene et constate que : 
 So, for example, testing the alpha property on some of the major mobile browsers yields the following table, based on work by AJFischer:
