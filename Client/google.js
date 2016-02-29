@@ -96,6 +96,7 @@ function requeteAjax(e,nombre)
     //Connexion au fichier php
 	var ajax = new XMLHttpRequest(); 
 	ajax.open('POST', 'server.php', true); 
+    ## id=idBonhomme <= entier & loc = '(x,y)' <= chaine de caractere 
 	ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
 	
     //Ecoute de la reponse
@@ -106,6 +107,9 @@ function requeteAjax(e,nombre)
 			{
                 var data = JSON.parse(ajax.responseText); //Decodage des donnees		
 				affiche(data); //Execution de l'affichage
+                # position = [equipeAmie, equipeAdverse]
+                # equipeAmie = [(x,y),(x,y)]
+                # equipeAdverse = [(x,y),(x,y)] <= adversaire (que l'on voit)
 			} 
 		}
 	); 
@@ -116,6 +120,56 @@ function requeteAjax(e,nombre)
     //Envoi de la requete
 	ajax.send(data);
 };        
+
+// Requete Ajax
+function requeteAjax(e,requete) 
+{
+    // Connexion au fichier php
+	var ajax = new XMLHttpRequest(); 
+	ajax.open('POST', 'loc.php', true);
+    ## id=idBonhomme <= entier & loc = '(x,y)' <= chaine de caractere 
+	ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
+	
+    // Ecoute de la reponse
+    ajax.addEventListener('readystatechange', 
+		function(e) 
+        { 
+			if(ajax.readyState == 4 && ajax.status == 200)  // Si le .php a bien renvoyé des données
+			{
+                var data = JSON.parse(ajax.responseText); // Decodage des donnees		
+                affiche(data); // Execution de l'affichage
+			} 
+		}
+	); 
+    
+    // Envoi de la requete
+	ajax.send(requete);
+};      
+
+// Requete Ajax
+function requeteAjax(e,requete) 
+{
+    // Connexion au fichier php
+	var ajax = new XMLHttpRequest(); 
+	ajax.open('POST', 'regle.php', true); 
+    ## id=idBonhomme <= entier & etat = 'obs' ou 'tir' ou 'assaut' ou 'protec' ou 'recup' <= chaine de caractere & directionTir = angleParRapportAuNord <= chaine de caractere & rayonObs = '1.8' <= chaine de caractere &  directionProtec = angleParRapportAuNord <= chaine de caractere
+	ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
+	
+    // Ecoute de la reponse
+    ajax.addEventListener('readystatechange', 
+		function(e) 
+        { 
+			if(ajax.readyState == 4 && ajax.status == 200)  // Si le .php a bien renvoyé des données
+			{
+                var data = JSON.parse(ajax.responseText); // Decodage des donnees		
+                affiche(data); // Execution de l'affichage
+			} 
+		}
+	); 
+    
+    // Envoi de la requete
+	ajax.send(requete);
+};      
            
 */     
 
