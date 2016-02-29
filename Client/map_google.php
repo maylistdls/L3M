@@ -22,6 +22,8 @@
         <div id="infoposition"></div>
         <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=geometry"></script>
 
+		<button id="observation" class="bouton_observation"> Observation </button>
+		
         <script src="google.js"></script>
 		<script src="boussole.js"></script>
 		
