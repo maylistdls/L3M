@@ -337,16 +337,22 @@ function removePolygone()
 }
 
 
+
 //Gestion des evenements
     //Objet window
-window.addEventListener('load',function (e){navigator.geolocation.getCurrentPosition(maPosition,errorCallback,{enableHighAccuracy : true, timeout:100000, maximumAge:100000});} ,false);
+window.addEventListener('load',function (e){
+    
+    
+    var observation = document.getElementById("observation");
+   
+    dezoom = function (event) {
+        zoom = map.zoom;
+        map.setZoom(parseInt(0.82*zoom));
+    }
 
-var observation = document.getElementById("observation");
-console.log(observation);
+    observation.addEventListener("click", dezoom, false);
 
-dezoom = function (event) {
-	zoom = map.zoom;
-	map.setZoom(parseInt(0.82*zoom));
-}
+    
+    navigator.geolocation.getCurrentPosition(maPosition,errorCallback,{enableHighAccuracy : true, timeout:100000, maximumAge:100000});} ,false);
 
-observation.addEventListener("click", dezoom, false);
+

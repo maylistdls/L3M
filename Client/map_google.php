@@ -22,7 +22,7 @@
         <div id="infoposition"></div>
         <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=geometry"></script>
 
-		<button id="observation" class="bouton_observation"> Observation </button>
+		
 		
         <script src="google.js"></script>
 		<script src="boussole.js"></script>
@@ -34,7 +34,7 @@
 		</div>
 
 		<div id="boutons">
-			<button id="obs" style="background-color:#98FB98" >Observation</button>
+			<button id="observation" style="background-color:#98FB98" >Observation</button>
 			<button id="assaut" style="background-color:#B0E0E6">Assaut</button>
 			<button id="tir" style="background-color:#F4A460">Tir</button>
 			<button id="protection" style="background-color:#FFD700">Protection</button>
