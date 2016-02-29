@@ -3,21 +3,7 @@ body {
 }
 
 
-.bouton_observation {
-	position : absolute;
-	margin-top : -500px;
-	margin-left : -400px;
-	height : 40px; 
-	background-color : red; /* Couleur de fond */
-	border: solid white;
-	border-radius:50px;
-	text-decoration : none;
-	font-size : 1.3em; /* Taille de police */
-}
 
-button:hover { /* "hover" : au survol des cellules */
-	border:5px solid #ffffff 
-}
 
 
 #form_connexion{
@@ -50,6 +36,7 @@ margin-bottom:10px;
     margin:auto;
     margin-top:2.5%;
     z-index:1;
+    border-radius: 500px;
 } 
 
 
