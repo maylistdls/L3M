@@ -1,3 +1,8 @@
+29 02 2016 17-19h30 + 20h30-23h
+Reunion 17-20h : point sur l'avancee, definition des structures d'echanges, probleme associe a la synchronisation des envois de donnees
+Soiree : resolution du probleme de synchronisation. 
+
+
 27 02 2016 soirée
 Generation d'une fonction assaut() au fichier fonctionnalite.js pour envoyer au serveur une demande d'assaut.
 
