@@ -11,7 +11,10 @@
     </head>
     <body>
     	<div id="jauges">
-    		<p>capacite :<progress id="avancement" value="50" max="100"></progress> </p>
+    		<p>capacite :
+    			<progress id="avancement" value="50" max="100"></progress> 
+    			<span id="pourcentage"></span>
+    		</p>
     	</div>
 
 
