@@ -127,15 +127,6 @@ function markerDelAgain()
         listeMarker[i].setMap(null);
 	}  
 }
-  
-  
-
-
-
-
-
-
-
 
 
 //Fog of war
@@ -226,8 +217,6 @@ var latlng;
 var orientation;
 var fogWarCircle;
 var superposition = 0;
-
-
 
 
 // Fonction de callback en cas de succès
@@ -346,7 +335,18 @@ function removePolygone()
 {
   fogWarCircle.setMap(null);
 }
-    
+
+
 //Gestion des evenements
     //Objet window
 window.addEventListener('load',function (e){navigator.geolocation.getCurrentPosition(maPosition,errorCallback,{enableHighAccuracy : true, timeout:100000, maximumAge:100000});} ,false);
+
+var observation = document.getElementById("observation");
+console.log(observation);
+
+dezoom = function (event) {
+	zoom = map.zoom;
+	map.setZoom(parseInt(0.82*zoom));
+}
+
+observation.addEventListener("click", dezoom, false);
