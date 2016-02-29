@@ -1,6 +1,9 @@
-29 02 2016 17-19h30 + 20h30-23h
+29 02 2016 17-19h30 + 20h30-23h30
 Reunion 17-20h : point sur l'avancee, definition des structures d'echanges, probleme associe a la synchronisation des envois de donnees
 Soiree : resolution du probleme de synchronisation. 
+
+Traitement de la réponse du serveur de localisation
+
 
 
 27 02 2016 soirée
