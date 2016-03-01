@@ -11,40 +11,15 @@ try {
     $stmt->execute();
     
     
-		$_POST['id']=1;
-		$_POST['loc']='(42.1,3)';
-
-    $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
-		$stmt->bindParam(':loc',$_POST['loc']);
-		$stmt->bindParam(':id',$_POST['id']);
-    $stmt->execute();
-    
-    
-        $_POST['id']=2;
-		$_POST['loc']='(42.2,3)';
-        $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
-		$stmt->bindParam(':loc',$_POST['loc']);
-		$stmt->bindParam(':id',$_POST['id']);
-    $stmt->execute();
-        $_POST['id']=3;
-		$_POST['loc']='(42.3,3)';
-        $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
-		$stmt->bindParam(':loc',$_POST['loc']);
-		$stmt->bindParam(':id',$_POST['id']);
-    $stmt->execute();
-       
-        $_POST['id']=5;
-		$_POST['loc']='(43.2,3)';
-        $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
-		$stmt->bindParam(':loc',$_POST['loc']);
-		$stmt->bindParam(':id',$_POST['id']);
-    $stmt->execute();
+		// Pour simuler le joueur 6 qui se déplace sur la carte
         $_POST['id']=6;
 		$_POST['loc']='('.$lat.',3)';
         $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
 		$stmt->bindParam(':loc',$_POST['loc']);
 		$stmt->bindParam(':id',$_POST['id']);
     $stmt->execute();
+    
+    
 
 		$select = $db->prepare("SELECT loc,id FROM perso WHERE equipe=(SELECT equipe FROM perso WHERE id=:id)");
 		$select->bindParam(':id',$_POST['id']);
