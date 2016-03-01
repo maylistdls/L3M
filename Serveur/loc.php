@@ -1,12 +1,47 @@
 <?php
 
+$lat = time()%90;
+
 try {
     require ("connexion.php");
 
-		$_POST['id']=6;
-		$_POST['loc']='(42,3)';
+    $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
+		$stmt->bindParam(':loc',$_POST['loc']);
+		$stmt->bindParam(':id',$_POST['id']);
+    $stmt->execute();
+    
+    
+		$_POST['id']=1;
+		$_POST['loc']='(42.1,3)';
 
     $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
+		$stmt->bindParam(':loc',$_POST['loc']);
+		$stmt->bindParam(':id',$_POST['id']);
+    $stmt->execute();
+    
+    
+        $_POST['id']=2;
+		$_POST['loc']='(42.2,3)';
+        $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
+		$stmt->bindParam(':loc',$_POST['loc']);
+		$stmt->bindParam(':id',$_POST['id']);
+    $stmt->execute();
+        $_POST['id']=3;
+		$_POST['loc']='(42.3,3)';
+        $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
+		$stmt->bindParam(':loc',$_POST['loc']);
+		$stmt->bindParam(':id',$_POST['id']);
+    $stmt->execute();
+       
+        $_POST['id']=5;
+		$_POST['loc']='(43.2,3)';
+        $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
+		$stmt->bindParam(':loc',$_POST['loc']);
+		$stmt->bindParam(':id',$_POST['id']);
+    $stmt->execute();
+        $_POST['id']=6;
+		$_POST['loc']='('.$lat.',3)';
+        $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
 		$stmt->bindParam(':loc',$_POST['loc']);
 		$stmt->bindParam(':id',$_POST['id']);
     $stmt->execute();

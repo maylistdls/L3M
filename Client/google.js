@@ -5,6 +5,8 @@ var map = new google.maps.Map(document.getElementById("map"),
 		zoom:18,
 		
 	});
+    
+var id = 4;
 
 	
 // Pour passer en vue satellite 
@@ -173,6 +175,90 @@ function requeteAjax(e,requete)
            
 */     
 
+
+// Requete Ajax pour la mise à jour de la localisation
+function requeteAjaxLocalisation(requete) 
+{
+    // Connexion au fichier php
+	var ajax = new XMLHttpRequest(); 
+	ajax.open('POST', '../Serveur/loc.php', true); 
+	ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
+	
+    // Ecoute de la reponse
+    ajax.addEventListener('readystatechange', 
+		function(e) 
+        { 
+			if(ajax.readyState == 4 && ajax.status == 200)  // Si le .php a bien renvoyé des données
+			{
+                var data = JSON.parse(ajax.responseText); // Decodage des donnees		
+                afficheLoc(data); // Execution de l'affichage
+			} 
+		}
+	); 
+    
+    // Envoi de la requete
+	ajax.send(requete);
+};       
+
+
+function pinSymbol(color) {
+    return {
+        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+        fillColor: color,
+        fillOpacity: 1,
+        strokeColor: '#000',
+        strokeWeight: 2,
+        scale: 1,
+   };
+} 
+
+// Resultat de la requete ajax
+function afficheLoc(data)
+{
+    var regExp = /\(([^)]+)\)/g;
+        
+    for	(index = 0; index < data.length; index++) {
+        console.log("changement equipe ");
+        var equipe = data[index];
+        if (index == 0 )
+        {
+            
+            var color = "#F00";
+        }
+        else 
+        {
+            
+            var color = "#FF0";
+        }
+        for	(index_equipe = 0; index_equipe < equipe.length; index_equipe++) {
+            var point = equipe[index_equipe];
+            var coordonnees = point.loc;
+            
+            var matches = coordonnees.match(regExp);
+            coordonnees = coordonnees.substring(1, coordonnees.length - 1);
+            coordonnees = coordonnees.split(",");
+            var x = parseFloat(coordonnees[0]);
+            var y = parseFloat(coordonnees[1]);
+            console.log(x,y);
+            if (point.id != id)
+            {
+                latlng = new google.maps.LatLng(x, y);
+                var marker = new google.maps.Marker(
+                {
+                    position: latlng,
+                    icon: pinSymbol(color)
+                }); 
+                
+                //Ajout du marqueur à la liste des marqueurs (pour les supprimer)
+                listeMarker.push(marker);
+                //Ajout du marqueur à la carte
+                marker.setMap(map);
+            }
+        }
+    }
+}; 
+
+
 //Fonction de suppression de marqueurs
 function markerDelAgain() 
 {
@@ -186,6 +272,9 @@ function markerDelAgain()
 //Fog of war
 function drawCircle(point, radius, dir) 
 { 
+    // input radius in metres
+    
+    radius = radius * 0.000621371
     var d2r = Math.PI / 180;   // degrees to radians 
     var r2d = 180 / Math.PI;   // radians to degrees 
     var earthsradius = 3963; // 3963 is the radius of the earth in miles
@@ -212,7 +301,7 @@ function drawCircle(point, radius, dir)
 }  
     
     
-    
+/*
 function drawMultiplesCircles(tableau)
 {
     var radius = 10;
@@ -265,6 +354,7 @@ function drawMultiplesCircles(tableau)
     
     return sortie;
 }    
+*/
     
 //Recuperation position utilisateur
 var latlng;
@@ -287,14 +377,14 @@ function maPosition(position) {
     
     // Un nouvel objet LatLng pour Google Maps avec les paramètres de position
     latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-    console.log(position.coords.latitude);
-    latlng2 = new google.maps.LatLng(position.coords.latitude+1, position.coords.longitude+1);
-    latlng3 = new google.maps.LatLng(position.coords.latitude+0.1, position.coords.longitude+0.1);
+    //console.log(position.coords.latitude);
+    //latlng2 = new google.maps.LatLng(position.coords.latitude+1, position.coords.longitude+1);
+    //latlng3 = new google.maps.LatLng(position.coords.latitude+0.1, position.coords.longitude+0.1);
 
     var listeCircle = new Array();
     listeCircle.push(latlng);
-    listeCircle.push(latlng2);
-    listeCircle.push(latlng3);
+    //listeCircle.push(latlng2);
+    //listeCircle.push(latlng3);
     // Permet de centrer la carte sur la position latlng
     map.panTo(latlng);
 	
@@ -307,7 +397,7 @@ function maPosition(position) {
       fillColor: '#444444',
       fillOpacity: 0.5,
       map: map,
-      paths: [outerbounds,drawMultiplesCircles(listeCircle)]
+      paths: [outerbounds,drawCircle(latlng,70,-1)]//drawMultiplesCircles(listeCircle)]
     };
     
 	
@@ -337,7 +427,7 @@ function maPosition(position) {
         fillOpacity: 0.35,
         map: map,
         center: latlng,
-        radius: 5
+        radius: position.coords.accuracy
     });
     
     if (superposition==1)
@@ -351,15 +441,18 @@ function maPosition(position) {
     //Suppression des marqueurs joueurs
     markerDelAgain();
     //Creation du marqueur
-
+    
+    var color = "#0F0";
     var marker = new google.maps.Marker(
     {
-        position: latlng
+        position: latlng,
+        icon: pinSymbol(color)
     }); 
     //Ajout du marqueur à la liste des marqueurs (pour les supprimer)
     listeMarker.push(marker);
     //Ajout du marqueur à la carte
     marker.setMap(map);
+    requeteAjaxLocalisation("id="+id+"&loc=("+position.coords.latitude+","+position.coords.longitude+")");
     
     
     

@@ -3,7 +3,7 @@ function requeteAjax(e,requete)
 {
     // Connexion au fichier php
 	var ajax = new XMLHttpRequest(); 
-	ajax.open('POST', 'serveur.php', true); 
+	ajax.open('POST', '../../../Serveur/loc.php', true); 
 	ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
 	
     // Ecoute de la reponse
@@ -29,6 +29,7 @@ function affiche(data)
     var regExp = /\(([^)]+)\)/g;
         
     for	(index = 0; index < data.length; index++) {
+        console.log("changement equipe ");
         var equipe = data[index];
         for	(index_equipe = 0; index_equipe < equipe.length; index_equipe++) {
             var point = equipe[index_equipe];
