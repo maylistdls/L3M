@@ -3,8 +3,8 @@
 try {
     require ("connexion.php");
 
-		$_POST['id']=6;
-		$_POST['loc']='(42,3)';
+		//$_POST['id']=6;
+		//$_POST['loc']='(42.2,3)';
 
     $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
 		$stmt->bindParam(':loc',$_POST['loc']);
