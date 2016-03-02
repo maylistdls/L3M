@@ -8,7 +8,9 @@ var map = new google.maps.Map(document.getElementById("map"),
     
 var id = 4;
 
-	
+// Définition du rayon de vue initial
+var rayon = 70;	
+
 // Pour passer en vue satellite 
 //map.setMapTypeId(google.maps.MapTypeId.SATELLITE);	
 
@@ -89,64 +91,79 @@ function makeInfoWindowEvent(map, infowindow, contentString, marker) {
             infowindow.setContent(contentString);
             infowindow.open(map, marker);
         },false);
-}
+}*/
 
-
+/*
 //Requete Ajax
-function requeteAjax(e,nombre) 
-{
-    //Connexion au fichier php
-	var ajax = new XMLHttpRequest(); 
-	ajax.open('POST', 'server.php', true); 
-    ## id=idBonhomme <= entier & loc = '(x,y)' <= chaine de caractere 
-	ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
-	
-    //Ecoute de la reponse
-    ajax.addEventListener('readystatechange', 
-		function(e) 
-        { 
-			if(ajax.readyState == 4 && ajax.status == 200)  //Si le .php a bien renvoyé des données
-			{
-                var data = JSON.parse(ajax.responseText); //Decodage des donnees		
-				affiche(data); //Execution de l'affichage
-                # position = [equipeAmie, equipeAdverse]
-                # equipeAmie = [(x,y),(x,y)]
-                # equipeAdverse = [(x,y),(x,y)] <= adversaire (que l'on voit)
-			} 
-		}
-	); 
-	
-    //Generation de la requete
-	var data = "requete=addTdt&nbr="+nombre;
-    
-    //Envoi de la requete
-	ajax.send(data);
-};        
+	function requeteAjax(e,nombre) 
+	{
+		//Connexion au fichier php
+		var ajax = new XMLHttpRequest(); 
+		ajax.open('POST', 'server.php', true); 
+		## id=idBonhomme <= entier & loc = '(x,y)' <= chaine de caractere 
+		ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
+		
+		//Ecoute de la reponse
+		ajax.addEventListener('readystatechange', 
+			function(e) 
+			{ 
+				if(ajax.readyState == 4 && ajax.status == 200)  //Si le .php a bien renvoyé des données
+				{
+					var data = JSON.parse(ajax.responseText); //Decodage des donnees		
+					affiche(data); //Execution de l'affichage
+					# position = [equipeAmie, equipeAdverse]
+					# equipeAmie = [(x,y),(x,y)]
+					# equipeAdverse = [(x,y),(x,y)] <= adversaire (que l'on voit)
+				} 
+			}
+		); 
+		
+		//Generation de la requete
+		var data = "requete=addTdt&nbr="+nombre;
+		
+		//Envoi de la requete
+		ajax.send(data);
+	};        
+*/
 
-// Requete Ajax
-function requeteAjax(e,requete) 
-{
-    // Connexion au fichier php
-	var ajax = new XMLHttpRequest(); 
-	ajax.open('POST', 'loc.php', true);
-    ## id=idBonhomme <= entier & loc = '(x,y)' <= chaine de caractere 
-	ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
+var observation = document.getElementById("observation");
+
+dezoom = function (event) {
+
+	// Requete Ajax
+	function requeteAjax(e,requete) 
+	{
+		// Connexion au fichier php
+		var ajax = new XMLHttpRequest(); 
+		ajax.open('POST', 'loc.php', true);
+		//## id=idBonhomme <= entier & loc = '(x,y)' <= chaine de caractere 
+		ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
+		
+		// Ecoute de la reponse
+		ajax.addEventListener('readystatechange', 
+			function(e) 
+			{ 
+				if(ajax.readyState == 4 && ajax.status == 200)  // Si le .php a bien renvoyé des données
+				{
+					var data = JSON.parse(ajax.responseText); // Decodage des donnees		
+					affiche(data); // Execution de l'affichage
+					if (data == true) {
+						rayon = rayon*1.18;
+					}
+					else 
+						console.log("pas le droit de changer le rayon de vue");
+				} 
+			}
+		); 
+		
+		// Envoi de la requete
+		ajax.send(requete);
+	};      
+}
 	
-    // Ecoute de la reponse
-    ajax.addEventListener('readystatechange', 
-		function(e) 
-        { 
-			if(ajax.readyState == 4 && ajax.status == 200)  // Si le .php a bien renvoyé des données
-			{
-                var data = JSON.parse(ajax.responseText); // Decodage des donnees		
-                affiche(data); // Execution de l'affichage
-			} 
-		}
-	); 
-    
-    // Envoi de la requete
-	ajax.send(requete);
-};      
+observation.addEventListener("click", dezoom, false);
+
+/*
 
 // Requete Ajax
 function requeteAjax(e,requete) 
@@ -337,19 +354,14 @@ function drawMultiplesCircles(tableau)
                         estDedans=1;
                         break;
                     }
-                }
-                
-                    
+                }                
             }
             if (!estDedans)
             {
                 sortie.push(extp[j]);
             }
-        }            
-        
+        }               
     }
-    
-    
     console.log(sortie);
     
     return sortie;
@@ -379,12 +391,10 @@ function maPosition(position) {
     latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
     //console.log(position.coords.latitude);
     //latlng2 = new google.maps.LatLng(position.coords.latitude+1, position.coords.longitude+1);
-    //latlng3 = new google.maps.LatLng(position.coords.latitude+0.1, position.coords.longitude+0.1);
 
     var listeCircle = new Array();
     listeCircle.push(latlng);
     //listeCircle.push(latlng2);
-    //listeCircle.push(latlng3);
     // Permet de centrer la carte sur la position latlng
     map.panTo(latlng);
 	
@@ -397,27 +407,14 @@ function maPosition(position) {
       fillColor: '#444444',
       fillOpacity: 0.5,
       map: map,
-      paths: [outerbounds,drawCircle(latlng,70,-1)]//drawMultiplesCircles(listeCircle)]
+      paths: [outerbounds,drawCircle(latlng,rayon,-1)]//drawMultiplesCircles(listeCircle)]
     };
     
-	
-	// Options du cercle 2 
-    // var fogWar2 = {
-      // strokeColor: '#444444',
-      // strokeOpacity: 0.1,
-      // strokeWeight: 0,
-      // fillColor: '#444444',
-      // fillOpacity: 0.5,
-      // map: map,
-      // paths: [outerbounds,drawCircle(latlng,20,-1)]
-    // };
-    
+
     // Ajout du cercle 1 à la carte
     fogWarCircle = new google.maps.Polygon(fogWar);
 	
-	// Ajout du cercle 2 à la carte
-    // fogWarCircle2 = new google.maps.Polygon(fogWar2);
-    
+
     // Marqueur position utilisateur
     var positionMarker = new google.maps.Circle({
         strokeColor: '#0000FF',
@@ -488,18 +485,6 @@ function removePolygone()
 //Gestion des evenements
     //Objet window
 window.addEventListener('load',function (e){
-    
-    
-    var observation = document.getElementById("observation");
-   
-    dezoom = function (event) {
-        zoom = map.zoom;
-        map.setZoom(parseInt(0.82*zoom));
-    }
-
-    observation.addEventListener("click", dezoom, false);
-
-    
-    navigator.geolocation.getCurrentPosition(maPosition,errorCallback,{enableHighAccuracy : true, timeout:100000, maximumAge:100000});} ,false);
+	navigator.geolocation.getCurrentPosition(maPosition,errorCallback,{enableHighAccuracy : true, timeout:100000, maximumAge:100000});} ,false);
 
 
