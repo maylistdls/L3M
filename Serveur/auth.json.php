@@ -42,4 +42,6 @@ $_SESSION['loginSQL']=$loginSQL ;
 
 // on peut envoyer la liste des parties
 // include('parties.inc.php');
+header("Location: ../Client/map_google.php");
+die();
 ?>
