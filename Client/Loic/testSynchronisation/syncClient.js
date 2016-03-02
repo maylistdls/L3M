@@ -1,6 +1,6 @@
 
 var HeureServeurOffset = new Date();
-HeureServeurOffset = (Math.floor(HeureServeurOffset.getTime()/1000)+5)*1000; // Delai de 25 secondes 
+HeureServeurOffset = (Math.floor(HeureServeurOffset.getTime()/1000)+5)*1000; // Delai de 5 secondes 
 
 
 function boucle2(){
