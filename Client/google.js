@@ -5,7 +5,7 @@ var map = new google.maps.Map(document.getElementById("map"),
 		zoom:18,
 		
 	});
-    
+
 var id = 4;
 
 // Définition du rayon de vue initial
@@ -22,6 +22,8 @@ var rayon = 70;
 
 // Chargement des tuiles (donnees google - vue satellite)
 map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+
+var roundDeg;
 
 //Variables globales
 var listeMarker = []; //Pour pouvoir supprimer les marqueurs
@@ -40,7 +42,74 @@ var outerbounds = [ // covers the (mercator projection) world
         new google.maps.LatLng(-85,180),
         new google.maps.LatLng(0,180),
         new google.maps.LatLng(85,180)];
+
+var tourne_camembert = function (angle){
+	document.getElementById("camembert").style.transform = "scale(2) rotate("+angle+"deg)";
+}
 		
+$(function(){
+    var $container = $('#rotationSliderContainer');
+    var $slider = $('#rotationSlider');
+	//var $camembert = $('#camembert');
+    var $degrees = $('#rotationSliderDegrees');
+    
+    var sliderWidth = $slider.width();
+    var sliderHeight = $slider.height();
+    var radius = $container.width()/2;
+    var deg = 0;    
+    
+    X = Math.round(radius* Math.sin(deg*Math.PI/180));
+    Y = Math.round(radius*  -Math.cos(deg*Math.PI/180));
+    $slider.css({ left: X+radius-sliderWidth/2, top: Y+radius-sliderHeight/2 });
+    
+    var mdown = false;
+    $container
+    .mousedown(function (e) { mdown = true; e.originalEvent.preventDefault(); })
+    .mouseup(function (e) { mdown = false; })
+    .mousemove(function (e) {
+        if(mdown)
+        {
+            
+            // firefox compatibility
+            if(typeof e.offsetX === "undefined" || typeof e.offsetY === "undefined") {
+               var targetOffset = $(e.target).offset();
+               e.offsetX = e.pageX - targetOffset.left;
+               e.offsetY = e.pageY - targetOffset.top;
+            }
+            
+            if($(e.target).is('#rotationSliderContainer'))
+                var mPos = {x: e.offsetX, y: e.offsetY};
+            else
+                var mPos = {x: e.target.offsetLeft + e.offsetX, y: e.target.offsetTop + e.offsetY};
+                
+            var atan = Math.atan2(mPos.x-radius, mPos.y-radius);
+            deg = -atan/(Math.PI/180) + 180; // final (0-360 positive) degrees from mouse position 
+            
+            
+            // for attraction to multiple of 90 degrees
+            var distance = Math.abs( deg - ( Math.round(deg / 90) * 90 ) );
+            
+            if( distance <= 5 )
+                deg = Math.round(deg / 90) * 90;
+                
+            if(deg == 360)
+                deg = 0;
+            
+            X = Math.round(radius* Math.sin(deg*Math.PI/180));
+            Y = Math.round(radius*  -Math.cos(deg*Math.PI/180));
+
+            $slider.css({ left: X+radius-sliderWidth/2, top: Y+radius-sliderHeight/2 });
+            
+            roundDeg = Math.round(deg);
+            
+            $degrees.html(roundDeg + '&deg;');
+            $('#imageRotateDegrees').val(roundDeg);
+            tourne_camembert(roundDeg);
+                
+        }
+    });
+
+});
 
 /*
 // A decommenter si on a besoin de requete ajax
@@ -377,15 +446,6 @@ var superposition = 0;
 
 // Fonction de callback en cas de succès
 function maPosition(position) {
-    //console.log(position.coords.latitude );
- 
-    var infopos = "Position déterminée :\n";
-    infopos += "Latitude : "+position.coords.latitude +"\n";
-    infopos += "Longitude: "+position.coords.longitude+"\n";
-    infopos += "Altitude : "+position.coords.altitude +"\n";
-    infopos += "Vitesse  : "+position.coords.speed +"\n";
-    infopos += "Orientation : "+position.coords.heading + "\n";
-    document.getElementById("infoposition").innerHTML = infopos;
     
     // Un nouvel objet LatLng pour Google Maps avec les paramètres de position
     latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
@@ -487,4 +547,21 @@ function removePolygone()
 window.addEventListener('load',function (e){
 	navigator.geolocation.getCurrentPosition(maPosition,errorCallback,{enableHighAccuracy : true, timeout:100000, maximumAge:100000});} ,false);
 
+var tir = document.getElementById("tir");
 
+zone_tir = function (event) {
+	var zone_mobile = new Image();
+	zone_mobile.setAttribute('id','camembert');
+	zone_mobile.src = 'camembert3.png'
+	document.getElementById("map").appendChild(zone_mobile);
+	zone_mobile.style.position = "relative";
+	zone_mobile.style.zIndex = "10";
+	zone_mobile.style.width = "500px";
+	zone_mobile.style.height = "500px";
+	zone_mobile.style.transform = "scale(2)";
+	zone_mobile.style.opacity = "0.4";
+	console.log(zone_mobile);
+	
+}
+
+tir.addEventListener("click", zone_tir, false);

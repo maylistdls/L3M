@@ -2,113 +2,66 @@ body {
     background-color: #FFFFFF;
 }
 
-
-#form_connexion{
-margin-top:10%;
-margin-right:auto;
-margin-left:auto;
-width:200px;
-padding:30px;
-border-radius: 20px;
-background-color: #00CCDD;
-overflow:auto;
-color:white;
-text-align:center;
-box-shadow: 0px 0px 100px 4px rgba(0,255,203,0.2);
+#jauges{
+	position:relative;
 }
 
-input{
-border-radius: 7px;
-padding:5px;
-text-align:center;
-margin-top:3px;
-margin-bottom:10px;
+#placement_carte_cercle{
+	position : relative;
+	margin-left : auto;
+	margin-right : auto;
+	height: 600px;
 }
-
 
 #map {
+	position : absolute;
     height:500px;
     width:500px;
-    padding:0px;
     margin:auto;
-    margin-top:2.5%;
     z-index:1;
     border-radius:1000px;
+	left:0; right:0; bottom:0; top:0;
+	vertical-align : center;
 } 
 
-
-img#logo_google{
-    float: left;
-    border: 5px solid #777777; 
-    border-radius:10px;
-    padding: 15px;
-    transform:rotate(-10deg);
-     width:70px;
-     height:70px;
-   
+#rotationSliderContainer { 
+    position: absolute;
+    width: 550px;
+    height: 550px;
+    border-radius: 275px;
+	margin : auto;
+	left:0; right:0; bottom:0; top:0;
+    border: 1px solid;
+    cursor: default;
+	vertical-align : center;
 }
 
-img#logo_leaflet{
-    float: right; 
-    border: 5px solid #777777;
-    border-radius:10px;
-    padding: 15px;
-   margin-top:10px;
-   transform:rotate(10deg);
-   width:120px;
-   height:50px ;
+#rotationSlider { 
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    background: #A64B00;
+    border-radius: 10px;
+    cursor: pointer;
+    z-index: 5;
+}
+#rotationSliderDegrees {
+    position: absolute;
+    top: 110px;
+    width: 100%;
+    font-size: 20px;
+    color: #FFF;
+    text-align: center;
+    -moz-user-select: none; 
+    -khtml-user-select: none; 
+    -webkit-user-select: none; 
+    -o-user-select: none;
+    z-index: 3;
 }
 
-img#logo_leaflet:hover {
--webkit-transform: scale(1.5);
-    -moz-transform: scale(1.5);
-     -ms-transform: scale(1.5);
-      -o-transform: scale(1.5);
-         transform: scale(1.5);
-         box-shadow:0 0 30px #777777;
+#boutons{
+	position: relative;
 }
-img#logo_google:hover {
--webkit-transform: scale(1.5);
-    -moz-transform: scale(1.5);
-     -ms-transform: scale(1.5);
-      -o-transform: scale(1.5);
-         transform: scale(1.5);
-         box-shadow:0 0 30px #777777;
-}
-
-#placement_logo{
-width:30%;
-margin-top:10%;
-margin-left:auto;
-margin-right:auto;}
-
-#placement_logo p{
-font-size:3em;
-text-align:center;
-padding-bottom:30px;
-font-family:cursive;
-}
-
-.form_nombreSeisme{
-font-family:sans-serif;
-display: inline-block;
-border:1px solid rgba(128,128,128,0.3);
-border-radius:20px;
-text-align:center;
-margin-top:25px;
-margin-left:auto;
-margin-right:auto;
-padding:15px;
-background-color:rgba(196,196,196,0.1);
-position: absolute;
-     left: 50%;
-     transform: translateX(-50%);
-     box-shadow: 0px 0px 100px 5px rgba(0,255,203,0.2);
-
-}
-
-fieldset {
-border:none;}
 
 button {
     display: inline-block;
