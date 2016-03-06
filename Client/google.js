@@ -48,6 +48,7 @@ var tourne_camembert = function (angle){
 }
 		
 $(function(){
+    var $zoneEcouteur = $('body');
     var $container = $('#rotationSliderContainer');
     var $slider = $('#rotationSlider');
 	//var $camembert = $('#camembert');
@@ -63,7 +64,7 @@ $(function(){
     $slider.css({ left: X+radius-sliderWidth/2, top: Y+radius-sliderHeight/2 });
     
     var mdown = false;
-    $container
+    $zoneEcouteur
     .mousedown(function (e) { mdown = true; e.originalEvent.preventDefault(); })
     .mouseup(function (e) { mdown = false; })
     .mousemove(function (e) {
