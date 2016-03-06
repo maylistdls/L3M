@@ -11,30 +11,36 @@
 		
     </head>
     <body>
-    	<div id="jauges">
-    		<p>capacite :
-    			<progress id="avancement" value="50" max="100"></progress> 
-    			<span id="pourcentage"></span>
-    		</p>
-    	</div>
-		<div id="compteARebours">
+        <div id="compteARebours">
         </div>
-		<div id="placement_carte_cercle">
-			<div id="rotationSliderContainer">
-				<div id="rotationSlider"></div>
-				<div id="rotationSliderDegrees">0&deg;</div>
-				<div id="map"></div>
-			</div>
-		</div>		
-		
-		<div id="boutons">
-			<button id="observation" style="background-color:#98FB98" >Observation</button>
-			<button id="assaut" style="background-color:#B0E0E6">Assaut</button>
-			<button id="tir" style="background-color:#F4A460">Tir</button>
-			<button id="protection" style="background-color:#FFD700">Protection</button>
-			<button id="recup" style="background-color:#CD5C5C">Récupération</button>
-		</div>			
-		
+        <div id="partieLancee">
+            <div id="jauges">
+                <p>capacite :
+                    <progress id="avancement" value="1" max="1"></progress> 
+                    <span id="pourcentage"></span>
+                </p>
+            </div>
+            
+            <div id="derniereAction"> 
+            </div>
+                <div id="parametrageDerniereAction">
+                </div>
+            <div id="placement_carte_cercle">
+                <div id="rotationSliderContainer">
+                    <div id="rotationSlider"></div>
+                    <!--<div id="rotationSliderDegrees">0&deg;</div>-->
+                    <div id="map"></div>
+                </div>
+            </div>		
+            
+            <div id="boutons">
+                <button id="observation" style="background-color:#98FB98" >Observation</button>
+                <button id="assaut" style="background-color:#B0E0E6">Assaut</button>
+                <button id="tir" style="background-color:#F4A460">Tir</button>
+                <button id="protection" style="background-color:#FFD700">Protection</button>
+                <button id="recup" style="background-color:#CD5C5C">Récupération</button>
+            </div>			
+		</div>
 		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=geometry"></script>
 		<script src="google.js"></script>
     </body>

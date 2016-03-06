@@ -1,5 +1,19 @@
-06 03 2016 16h30 - 18h
+06 03 2016 16h30 - 22h
 Creation d'un compte a rebours pour le lancement des parties et pour la fin du tour de jeu
+
+Cote client : 
+Ajout de la synchronisation client
+Derniere action sauvegardee
+Envoi des données serveur selon le bouton
+Traitement des donnees serveur : 
+    - modification du zoom
+    - modification des capa
+
+Cote serveur : 
+Correction bug dans regles.php
+
+
+
 
 04 03 2016 17h10 - 20h30 
 Travail en commun avec Maxime S sur le bouton de tir. 

@@ -2,6 +2,14 @@ body {
     background-color: #FFFFFF;
 }
 
+#partieLancee{
+    visibility:hidden;
+}
+
+#compteARebours{
+    text-align:left;
+    width : 50%;
+    margin : auto;}
 #jauges{
 	position:relative;
 }
@@ -31,12 +39,13 @@ body {
     border-radius: 275px;
 	margin : auto;
 	left:0; right:0; bottom:0; top:0;
-    border: 1px solid;
+    border: 0px solid;
     cursor: default;
 	vertical-align : center;
 }
 
 #rotationSlider { 
+    visibility : hidden;
     position: absolute;
     height: 20px;
     width: 20px;
