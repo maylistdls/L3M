@@ -1,6 +1,22 @@
+06 03 2016 16h30 - 18h
+Creation d'un compte a rebours pour le lancement des parties et pour la fin du tour de jeu
+
+04 03 2016 17h10 - 20h30 
+Travail en commun avec Maxime S sur le bouton de tir. 
+Creation d'un curseur circulaire pour obtenir l'angle de tir.
+Visualisation de cet angle de tir.
+
+02 03 2016 19h54 - 21h
+Correction du formulaire de connexion à la partie
+Redirection du client lorsqu'il a réussi à se connecter
+
 01 03 2016 20h-23h40
 Resolution du probleme de lancement de partie : attente d'avoir suffisament de joueur pour commencer une partie (en php)
 Resolution du probleme de synchronisation cote serveur
+Fusion entre client et serveur sur le service de localisation
+Retour au mode 1 seul cercle de brouillard (centré sur la position du client)
+Ajout d'un cercle bleu indiquant la précision de la position obtenue grace recepteur GPS
+
 
 01 03 2016 apres midi
 Envoi des positions sur le serveur toutes les 8 secondes

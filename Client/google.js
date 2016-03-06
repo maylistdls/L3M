@@ -545,7 +545,9 @@ function removePolygone()
 //Gestion des evenements
     //Objet window
 window.addEventListener('load',function (e){
-	navigator.geolocation.getCurrentPosition(maPosition,errorCallback,{enableHighAccuracy : true, timeout:100000, maximumAge:100000});} ,false);
+	navigator.geolocation.getCurrentPosition(maPosition,errorCallback,{enableHighAccuracy : true, timeout:100000, maximumAge:100000});
+    //compte_a_rebours_DEBUT_PARTIE(1457283022000);
+    } ,false);
 
 var tir = document.getElementById("tir");
 
@@ -565,3 +567,77 @@ zone_tir = function (event) {
 }
 
 tir.addEventListener("click", zone_tir, false);
+
+
+
+function compte_a_rebours_TOUR(DateDeFinEnMilliSeconde)
+{
+	var compte_a_rebours = document.getElementById("compteARebours");
+	var date_actuelle = new Date();
+	var total_secondes = Math.floor((DateDeFinEnMilliSeconde - date_actuelle) / 1000);
+    var minutes = "";
+    var secondes = "";
+    var suffixe = "";
+	var prefixe = "Fin du tour dans ";
+	if (total_secondes < 0)
+	{
+        var point="";
+        switch (Math.abs(total_secondes)%3)
+        {
+            case 0:
+            point = ".";
+            break;
+            case 1: 
+            point = "..";
+            break;
+            case 2 : 
+            point = "...";
+            break;
+        }
+		prefixe = "Attente du serveur"+point;
+	}
+    else
+	{
+        secondes = total_secondes % 60;
+        minutes = (total_secondes - secondes) / 60;
+        
+        if (secondes < 10)
+        {
+            secondes = "0"+secondes;
+        }
+        suffixe = minutes + ':' + secondes;
+	}
+    
+    compte_a_rebours.innerHTML = prefixe +" "+ suffixe;
+
+	var actualisation = setTimeout("compte_a_rebours_TOUR("+DateDeFinEnMilliSeconde+");", 1000);
+}
+
+function compte_a_rebours_DEBUT_PARTIE(DateDeFinEnMilliSeconde)
+{
+	var compte_a_rebours = document.getElementById("compteARebours");
+	var date_actuelle = new Date();
+	var total_secondes = Math.floor((DateDeFinEnMilliSeconde - date_actuelle) / 1000);
+    var minutes = "";
+    var secondes = "";
+    var suffixe = "";
+	var prefixe = "Lancement de la partie dans ";
+	if (total_secondes < 0)
+	{
+        compte_a_rebours_TOUR(DateDeFinEnMilliSeconde);
+	}
+    else
+	{
+        secondes = total_secondes % 60;
+        minutes = (total_secondes - secondes) / 60;
+        
+        if (secondes < 10)
+        {
+            secondes = "0"+secondes;
+        }
+        suffixe = minutes + ':' + secondes;
+        
+        compte_a_rebours.innerHTML = prefixe +" "+ suffixe;
+        var actualisation = setTimeout("compte_a_rebours_DEBUT_PARTIE("+DateDeFinEnMilliSeconde+");", 1000);
+	}	
+}
