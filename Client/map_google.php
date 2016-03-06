@@ -17,7 +17,8 @@
     			<span id="pourcentage"></span>
     		</p>
     	</div>
-		
+		<div id="compteARebours">
+        </div>
 		<div id="placement_carte_cercle">
 			<div id="rotationSliderContainer">
 				<div id="rotationSlider"></div>
