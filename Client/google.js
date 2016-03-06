@@ -6,10 +6,28 @@ var map = new google.maps.Map(document.getElementById("map"),
 		
 	});
 
+var capaMax = 10000;
+var capa = capaMax;
+var progressBar = document.getElementById("avancement");
+progressBar.max = capaMax;
+progressBar.value = capaMax;
+var dureeTourDeJeu = 30000; //120000 = 2 minutes
 var id = 4;
-
+var etat = 'obs';
+var directionTir = '0';
+var rayonObs = '70';
+var directionProtect = '0';
+var envoieRequete;
 // Définition du rayon de vue initial
 var rayon = 70;	
+var derniereAction = document.getElementById("derniereAction");
+var parametrageDerniereAction = document.getElementById("parametrageDerniereAction");
+var angleParRapportAuNord = 0;
+preparationRequete = function()
+{
+    return "id="+id+"&etat='"+etat+"'&directionTir='"+directionTir+"'&angleParRapportAuNord='"+angleParRapportAuNord+"'&rayonObs='"+rayonObs+"'&directionProtec='"+angleParRapportAuNord+"'";
+}
+
 
 // Pour passer en vue satellite 
 //map.setMapTypeId(google.maps.MapTypeId.SATELLITE);	
@@ -68,7 +86,7 @@ $(function(){
     .mousedown(function (e) { mdown = true; e.originalEvent.preventDefault(); })
     .mouseup(function (e) { mdown = false; })
     .mousemove(function (e) {
-        if(mdown)
+        if(mdown && document.getElementById("rotationSlider").style.visibility == "visible")
         {
             
             // firefox compatibility
@@ -105,6 +123,9 @@ $(function(){
             
             $degrees.html(roundDeg + '&deg;');
             $('#imageRotateDegrees').val(roundDeg);
+            
+            angleParRapportAuNord = roundDeg;
+            parametrageDerniereAction.innerHTML = "Angle : "+roundDeg+" degrés";
             tourne_camembert(roundDeg);
                 
         }
@@ -196,7 +217,6 @@ function makeInfoWindowEvent(map, infowindow, contentString, marker) {
 	};        
 */
 
-var observation = document.getElementById("observation");
 
 dezoom = function (event) {
 
@@ -230,8 +250,8 @@ dezoom = function (event) {
 		ajax.send(requete);
 	};      
 }
-	
-observation.addEventListener("click", dezoom, false);
+
+
 
 /*
 
@@ -262,6 +282,36 @@ function requeteAjax(e,requete)
            
 */     
 
+// Requete Ajax pour la mise à jour de la localisation
+function requeteAjaxAction(requete) 
+{
+    // Connexion au fichier php
+	var ajax = new XMLHttpRequest(); 
+	ajax.open('POST', '../Serveur/regle.php', true); 
+	ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
+	//## id=idBonhomme <= entier & etat = 'obs' ou 'tir' ou 'assaut' ou 'protec' ou 'recup' <= chaine de caractere & directionTir = angleParRapportAuNord <= chaine de caractere & rayonObs = '1.8' <= chaine de caractere &  directionProtec = angleParRapportAuNord <= chaine de caractere
+    // Ecoute de la reponse
+    ajax.addEventListener('readystatechange', 
+		function(e) 
+        { 
+			if(ajax.readyState == 4 && ajax.status == 200)  // Si le .php a bien renvoyé des données
+			{
+                DateDeFinEnMilliSeconde+=dureeTourDeJeu; 
+                var data = JSON.parse(ajax.responseText); // Decodage des donnees	           
+                console.log(data); // Execution de l'affichage
+                rayon = rayon*data.obs;
+                capa = data.capa;
+                progressBar.value = capa;
+                
+			} 
+		}
+	); 
+    
+    // Envoi de la requete
+    envoieRequete = false;
+    console.log(requete);
+	ajax.send(requete);
+};  
 
 // Requete Ajax pour la mise à jour de la localisation
 function requeteAjaxLocalisation(requete) 
@@ -546,14 +596,16 @@ function removePolygone()
 //Gestion des evenements
     //Objet window
 window.addEventListener('load',function (e){
-	navigator.geolocation.getCurrentPosition(maPosition,errorCallback,{enableHighAccuracy : true, timeout:100000, maximumAge:100000});
-    //compte_a_rebours_DEBUT_PARTIE(1457283022000);
+    var debutPartie = new Date().getTime()+15000;
+    DateDeFinEnMilliSeconde = debutPartie
+	compte_a_rebours_DEBUT_PARTIE();
+    
     } ,false);
 
 var tir = document.getElementById("tir");
 
-zone_tir = function (event) {
-	var zone_mobile = new Image();
+createCamember = function(){
+    var zone_mobile = new Image();
 	zone_mobile.setAttribute('id','camembert');
 	zone_mobile.src = 'camembert3.png'
 	document.getElementById("map").appendChild(zone_mobile);
@@ -563,15 +615,22 @@ zone_tir = function (event) {
 	zone_mobile.style.height = "500px";
 	zone_mobile.style.transform = "scale(2)";
 	zone_mobile.style.opacity = "0.4";
-	console.log(zone_mobile);
-	
+    zone_mobile.style.visibility = "hidden";
+    
 }
 
-tir.addEventListener("click", zone_tir, false);
+zone_tir = function (event) {
+    document.getElementById("rotationSlider").style.visibility = "visible";
+    document.getElementById("camembert").style.visibility = "visible";
+    document.getElementById("rotationSliderContainer").style.border = "1px solid";
+    
+}
 
 
 
-function compte_a_rebours_TOUR(DateDeFinEnMilliSeconde)
+
+
+function compte_a_rebours_TOUR()
 {
 	var compte_a_rebours = document.getElementById("compteARebours");
 	var date_actuelle = new Date();
@@ -596,6 +655,11 @@ function compte_a_rebours_TOUR(DateDeFinEnMilliSeconde)
             break;
         }
 		prefixe = "Attente du serveur"+point;
+        if (envoieRequete)
+        {
+            requeteAjaxAction(preparationRequete());
+        }
+        // envoie donnees tour de jeu
 	}
     else
 	{
@@ -607,14 +671,15 @@ function compte_a_rebours_TOUR(DateDeFinEnMilliSeconde)
             secondes = "0"+secondes;
         }
         suffixe = minutes + ':' + secondes;
+        envoieRequete = true;
 	}
     
     compte_a_rebours.innerHTML = prefixe +" "+ suffixe;
 
-	var actualisation = setTimeout("compte_a_rebours_TOUR("+DateDeFinEnMilliSeconde+");", 1000);
+	var actualisation = setTimeout("compte_a_rebours_TOUR();", 1000);
 }
 
-function compte_a_rebours_DEBUT_PARTIE(DateDeFinEnMilliSeconde)
+function compte_a_rebours_DEBUT_PARTIE()
 {
 	var compte_a_rebours = document.getElementById("compteARebours");
 	var date_actuelle = new Date();
@@ -623,9 +688,15 @@ function compte_a_rebours_DEBUT_PARTIE(DateDeFinEnMilliSeconde)
     var secondes = "";
     var suffixe = "";
 	var prefixe = "Lancement de la partie dans ";
+    console.log(total_secondes);
 	if (total_secondes < 0)
 	{
-        compte_a_rebours_TOUR(DateDeFinEnMilliSeconde);
+        document.getElementById("partieLancee").style.visibility = "visible";
+        DateDeFinEnMilliSeconde+=dureeTourDeJeu;
+        compte_a_rebours_TOUR();
+        navigator.geolocation.getCurrentPosition(maPosition,errorCallback,{enableHighAccuracy : true, timeout:100000, maximumAge:100000});
+    
+        
 	}
     else
 	{
@@ -639,6 +710,61 @@ function compte_a_rebours_DEBUT_PARTIE(DateDeFinEnMilliSeconde)
         suffixe = minutes + ':' + secondes;
         
         compte_a_rebours.innerHTML = prefixe +" "+ suffixe;
-        var actualisation = setTimeout("compte_a_rebours_DEBUT_PARTIE("+DateDeFinEnMilliSeconde+");", 1000);
+        var actualisation = setTimeout("compte_a_rebours_DEBUT_PARTIE();", 1000);
 	}	
 }
+
+function hide_zone_tir()
+{
+    document.getElementById("rotationSlider").style.visibility = "hidden";
+    document.getElementById("camembert").style.visibility = "hidden";
+    document.getElementById("rotationSliderContainer").style.border = "0px solid";
+};
+
+function functionAction(cible)
+{
+    derniereAction.innerHTML = cible;
+    switch (cible)
+    {
+        case "observation":
+            etat = 'obs';
+            hide_zone_tir();
+            parametrageDerniereAction.innerHTML = "";
+            break;
+        case "assaut":
+            etat = 'assaut';
+            hide_zone_tir();
+            parametrageDerniereAction.innerHTML = "";
+            break;
+        case "tir":
+            etat = 'tir';
+            zone_tir();
+            break;
+        case "protection":
+            etat = 'protect';
+            zone_tir();
+            break;
+        case "recup":
+            etat = 'recup';
+            hide_zone_tir();
+            parametrageDerniereAction.innerHTML = "";
+            break;
+    }
+};
+
+
+createCamember();
+var observation = document.getElementById("observation");
+observation.addEventListener("click", function(){functionAction("observation")}, false);
+
+var assaut = document.getElementById("assaut");
+assaut.addEventListener("click", function(){functionAction("assaut")}, false);
+
+var tir = document.getElementById("tir");
+tir.addEventListener("click", function(){functionAction("tir")}, false);
+
+var protection = document.getElementById("protection");
+protection.addEventListener("click", function(){functionAction("protection")}, false);
+
+var recup = document.getElementById("recup");
+recup.addEventListener("click", function(){functionAction("recup")}, false);
