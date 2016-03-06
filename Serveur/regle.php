@@ -77,7 +77,7 @@ try {
     }
 // ---- Non-Jeu ----
     else {
-        $stmt2 = $db->prepare('UPDATE perso SET regen=capa*0.25, etat=1,obs=50, WHERE id=:id');
+        $stmt2 = $db->prepare('UPDATE perso SET regen=capa*0.25, etat=1,obs=50 WHERE id=:id');
         $stmt2->bindParam(':id', $_POST['id']);
         $stmt2->execute();
     }
