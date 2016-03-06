@@ -3,7 +3,7 @@
 try {
     require 'connexion.php';
 // ---- Initialisation ----
-    $compte = 0;
+    $compte = 5;
     $tour = $db->prepare('UPDATE perso SET regen=0, protec=1, recup=0, tir=0, assaut=0, etat=0, obs=1 WHERE id=:id');
     $tour->bindParam(':id', $_POST['id']);
     $tour->execute();
@@ -138,6 +138,7 @@ try {
     $stmt2->bindParam(':id', $_POST['id']);
     $stmt2->execute();
     $envoi = $stmt2->fetch(PDO::FETCH_ASSOC);
+    echo json_encode($envoi);
 } catch (Exception $e) {
     echo "<h1 align='center'>Error about the action!</h1>";
     echo $e;
