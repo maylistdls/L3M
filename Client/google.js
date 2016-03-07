@@ -25,7 +25,7 @@ var parametrageDerniereAction = document.getElementById("parametrageDerniereActi
 var angleParRapportAuNord = 0;
 preparationRequete = function()
 {
-    return "id="+id+"&etat='"+etat+"'&directionTir='"+directionTir+"'&angleParRapportAuNord='"+angleParRapportAuNord+"'&rayonObs='"+rayonObs+"'&directionProtec='"+angleParRapportAuNord+"'";
+    return "id="+id+"&etat='"+etat+"'&directionTir='"+angleParRapportAuNord+"'&rayonObs='"+rayonObs+"'&directionProtec='"+angleParRapportAuNord+"'";
 }
 
 
@@ -296,7 +296,7 @@ function requeteAjaxAction(requete)
         { 
 			if(ajax.readyState == 4 && ajax.status == 200)  // Si le .php a bien renvoyé des données
 			{
-                DateDeFinEnMilliSeconde+=dureeTourDeJeu; 
+                DateDeFinEnMilliSeconde = dateProchainEnvoi; 
                 var data = JSON.parse(ajax.responseText); // Decodage des donnees	           
                 console.log(data); // Execution de l'affichage
                 rayon = rayon*data.obs;
@@ -306,7 +306,7 @@ function requeteAjaxAction(requete)
 			} 
 		}
 	); 
-    
+    var dateProchainEnvoi = new Date().getTime() + dureeTourDeJeu;
     // Envoi de la requete
     envoieRequete = false;
     console.log(requete);
