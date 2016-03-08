@@ -126,7 +126,7 @@ try {
         }
     }
 // ---- Declenchement des calculs ----
-    if ($compte > 6) {
+    if ($compte > 5) {
         $stmt = $db->prepare('SELECT id FROM perso');
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
