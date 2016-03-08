@@ -1,3 +1,13 @@
+08 03 2016 14h - 14h40
+Session du 07 03 2016 recommencée (probleme synchronisation github... tout le travail d'hier a du être refait...)
+
+
+07 03 2016 20h30 - 23h30
+Recherche et correction du bug d'affichage de l'observation
+Rearrangement du code dans google.js
+Correction de variable lors de l'echange de donnees avec le serveur
+
+
 06 03 2016 16h30 - 22h
 Creation d'un compte a rebours pour le lancement des parties et pour la fin du tour de jeu
 
