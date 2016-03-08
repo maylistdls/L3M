@@ -60,7 +60,7 @@ try {
     $stmt->execute();
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $locqg = $stmt->fetchAll();
-	$envoi=Array($locqg,$id);
+	  $envoi=Array($locqg,$id,time()+30);
     $stmt = $db->prepare('UPDATE sync SET d_sync=0');
     $stmt->execute();
     echo json_encode($envoi);
