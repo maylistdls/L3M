@@ -3,7 +3,7 @@
 try {
     require 'connexion.php';
 // ---- Initialisation ----
-    $compte = 5;
+    $compte = 6;
     $tour = $db->prepare('UPDATE perso SET regen=0, protec=1, recup=0, tir=0, assaut=0, etat=0 WHERE id=:id');
     $tour->bindParam(':id', $_POST['id']);
     $tour->execute();
@@ -36,6 +36,19 @@ try {
                 $stmt2->execute();
             }
         }
+        $stmt = $db->prepare('SELECT id FROM qg WHERE equipe!=(SELECT equipe FROM perso WHERE id=:id) AND
+        (loc<->(SELECT loc FROM perso WHERE id=:id))<=18 ORDER BY loc<->(SELECT loc FROM perso WHERE id=:id) LIMIT 1');
+        $stmt->bindParam(':id', $_POST['id']);
+        $stmt->execute();
+        $rows = $stmt->fetchAll();
+        foreach ($rows as $row) {
+            if ($row['id'] != '') {
+                $ote = $db->prepare('UPDATE qg SET capa=capa-(SELECT capa FROM perso WHERE id=:id)/4 WHERE id=:ad');
+                $ote->bindParam(':id', $_POST['id']);
+                $ote->bindParam(':ad', $row['id'], PDO::PARAM_INT);
+                $ote->execute();
+            }
+        }
     }
 // ---- TIR ----
     elseif ($_POST['etat'] == 'tir') {
@@ -51,10 +64,31 @@ try {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $rows = $stmt->fetchAll();
         foreach ($rows as $row) {
+          if ($row['id'] != '') {
             $up = $db->prepare('UPDATE perso SET tir=round(100000/(loc<->(SELECT loc FROM perso WHERE id=:id))) WHERE id=:ad');
             $up->bindParam(':id', $_POST['id']);
             $up->bindParam(':ad', $row['id'], PDO::PARAM_INT);
             $up->execute();
+          }
+        }
+        $stmt = $db->prepare('SELECT id FROM qg WHERE
+          (loc<->(SELECT loc FROM perso WHERE id=:id))<=100 AND
+          (loc<->(SELECT loc FROM perso WHERE id=:id))>0 AND
+          equipe!=(SELECT equipe FROM perso WHERE id=:id) AND
+          degrees(acos((loc<->(SELECT loc FROM perso WHERE id=:id))/100))>=(:cap-45)%(360) AND
+          degrees(acos((loc<->(SELECT loc FROM perso WHERE id=:id))/100))<=(:cap+45)%(360)');
+        $stmt->bindParam(':id', $_POST['id']);
+        $stmt->bindParam(':cap', $_POST['cap']);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $rows = $stmt->fetchAll();
+        foreach ($rows as $row) {
+          if ($row['id'] != '') {
+            $up = $db->prepare('UPDATE qg SET capa=capa-round(100000/(loc<->(SELECT loc FROM perso WHERE id=:id))) WHERE id=:ad');
+            $up->bindParam(':id', $_POST['id']);
+            $up->bindParam(':ad', $row['id'], PDO::PARAM_INT);
+            $up->execute();
+          }
         }
         $stmt2 = $db->prepare('UPDATE perso SET regen=capa*0.25,obs=50, etat=:etat WHERE id=:id');
         $stmt2->bindParam(':id', $_POST['id']);
@@ -125,7 +159,6 @@ try {
               $stmt->execute();
               $rows = $stmt->fetch(PDO::FETCH_ASSOC);
           } else {
-              print_r("changement d'heure");
               $stmt = $db->prepare('UPDATE sync SET t_sync=:temps');
               $stmt->bindParam(':temps', time());
               $stmt->execute();
