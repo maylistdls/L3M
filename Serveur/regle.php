@@ -169,7 +169,12 @@ try {
     $stmt2 = $db->prepare('SELECT capa,obs FROM perso WHERE id=:id');
     $stmt2->bindParam(':id', $_POST['id']);
     $stmt2->execute();
-    $envoi = $stmt2->fetch(PDO::FETCH_ASSOC);
+    $envoi1 = $stmt2->fetch(PDO::FETCH_ASSOC);
+    $stmt2 = $db->prepare('SELECT capa FROM qg WHERE equipe=(SELECT equipe FROM perso WHERE id=:id)');
+    $stmt2->bindParam(':id', $_POST['id']);
+    $stmt2->execute();
+    $envoi2 = $stmt2->fetch(PDO::FETCH_ASSOC);
+    $envoi = Array ($envoi1,$envoi2);
     echo json_encode($envoi);
 } catch (Exception $e) {
     echo "<h1 align='center'>Error about the action!</h1>";

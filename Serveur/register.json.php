@@ -40,7 +40,18 @@ $data['encours']=null;
 // Renvoi du login en json
 
 $_SESSION['login']=$login ;
+$q = "SELECT login, password,id FROM joueur where login='$loginSQL' and password='$password' ";
+$r = mysqli_query($link, $q);
+if (mysqli_num_rows($r) != 1)
+  dieErrorJson('erreur sur le mot de passe');
+while ($ligne = mysqli_fetch_assoc($r)) {
+      $id = $ligne['id'];
+  }
+$q = "SELECT idpartie FROM joueur where idjoueur=$id";
+$partie = mysqli_query($link, $q);
 
+$_POST['id']=$id;
+$_POST['partie']=$partie;
 checkDieErrorJson();
 // include('../include/parties.inc.php');
 header("Location: ../Client/map_google.php");

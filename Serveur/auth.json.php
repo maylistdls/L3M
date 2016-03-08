@@ -30,16 +30,23 @@ $login=$_POST["login"];
 $loginSQL=mysqli_real_escape_string($link,$login);
 $password = mysqli_real_escape_string($link, md5($login.$_POST["password"]));
 // Pour des raisons de sécurité, le mdp est mélangé au login. Voir register.json.php
-$q = "SELECT login, password FROM joueur where login='$loginSQL' and password='$password' ";
+$q = "SELECT login, password,id FROM joueur where login='$loginSQL' and password='$password' ";
 $r = mysqli_query($link, $q);
 if (mysqli_num_rows($r) != 1)
   dieErrorJson('erreur sur le mot de passe');
-
+while ($ligne = mysqli_fetch_assoc($r)) {
+      $id = $ligne['id'];
+  }
 // à partir d'ici, le login et le mot de passe correspondent,
 // On stocke le login en session
 $_SESSION['login']=$login ;
 $_SESSION['loginSQL']=$loginSQL ;
 
+$q = "SELECT idpartie FROM joueur where idjoueur=$id";
+$partie = mysqli_query($link, $q);
+
+$_POST['id']=$id;
+$_POST['partie']=$partie;
 // on peut envoyer la liste des parties
 // include('parties.inc.php');
 header("Location: ../Client/map_google.php");
