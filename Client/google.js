@@ -50,6 +50,7 @@ var tir ;
 var protection;
 var recup;
 var progressBar;
+var QGBar;
 
 
 
@@ -663,6 +664,10 @@ window.addEventListener('load',function (e){
 	progressBar = document.getElementById("avancement");
 	progressBar.max = capaMax;
 	progressBar.value = capaMax;
+
+    QGBar = document.getElementById("QGavancement");
+    QGBar.max = capaMax;
+    QGBar.value = capaMax;
 	
 	createCamember();
 	

@@ -15,6 +15,10 @@
         </div>
         <div id="partieLancee">
             <div id="jauges">
+                <p>QG :
+                    <progress id="QGavancement" value="1" max="1"></progress> 
+                    <span id="QGpourcentage"></span>
+                </p>
                 <p>capacite :
                     <progress id="avancement" value="1" max="1"></progress> 
                     <span id="pourcentage"></span>
