@@ -495,24 +495,29 @@ function functionAction(cible)
     {
         case "observation":
             etat = 'obs';
+            document.body.style.background="#98FB98";
             hide_zone_tir();
             parametrageDerniereAction.innerHTML = "";
             break;
         case "assaut":
             etat = 'assaut';
+            document.body.style.background="#B0E0E6";
             hide_zone_tir();
             parametrageDerniereAction.innerHTML = "";
             break;
         case "tir":
             etat = 'tir';
+            document.body.style.background="#F4A460";
             zone_tir();
             break;
         case "protection":
             etat = 'protect';
+            document.body.style.background="#FFD700";
             zone_tir();
             break;
         case "recup":
             etat = 'recup';
+            document.body.style.background="#CD5C5C";
             hide_zone_tir();
             parametrageDerniereAction.innerHTML = "";
             break;
