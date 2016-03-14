@@ -1,7 +1,4 @@
 <?php
-
-$lat = time()%90;
-
 try {
     require ("connexion.php");
 
@@ -9,17 +6,13 @@ try {
 		$stmt->bindParam(':loc',$_POST['loc']);
 		$stmt->bindParam(':id',$_POST['id']);
     $stmt->execute();
-    
-    
+
+
 		// Pour simuler le joueur 6 qui se déplace sur la carte
-        $_POST['id']=6;
-		$_POST['loc']='('.$lat.',3)';
-        $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
+    $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
 		$stmt->bindParam(':loc',$_POST['loc']);
 		$stmt->bindParam(':id',$_POST['id']);
     $stmt->execute();
-    
-    
 
 		$select = $db->prepare("SELECT loc,id FROM perso WHERE equipe=(SELECT equipe FROM perso WHERE id=:id)");
 		$select->bindParam(':id',$_POST['id']);
