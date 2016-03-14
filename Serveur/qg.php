@@ -11,7 +11,7 @@ try {
     $stmt = $db->prepare('SELECT * FROM sync');
     $stmt->execute();
     $rows = $stmt->fetch(PDO::FETCH_ASSOC);
-	$id = $rows['d_sync'];
+	  $id = $rows['d_sync'];
     while ($rows['d_sync']<6) {
       sleep(10);
       $stmt = $db->prepare('SELECT d_sync FROM sync');
@@ -68,9 +68,8 @@ try {
     }
     $stmt = $db->prepare('SELECT r_sync FROM sync');
     $stmt->execute();
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $tps = $stmt->fetchAll();
-    $tps=$tps+30;
+    $tps = $stmt->fetch(PDO::FETCH_ASSOC);
+    $tps=(int)$tps['r_sync']+30;
 	  $envoi=Array($locqg,$id,$tps);
     echo json_encode($envoi);
     sleep(15);
