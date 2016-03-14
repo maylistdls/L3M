@@ -601,10 +601,33 @@ function requeteAjaxLocalisation(requete)
 
 
 
-		
 
-
-
+function requeteAjaxDebutPartie() 
+{
+    // Connexion au fichier php
+	var ajax = new XMLHttpRequest(); 
+	ajax.open('POST', '../Serveur/qg.php', true); 
+	ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
+	
+    // Ecoute de la reponse
+    ajax.addEventListener('readystatechange', 
+		function(e) 
+        { 
+			if(ajax.readyState == 4 && ajax.status == 200)  // Si le .php a bien renvoyé des données
+			{
+                var data = JSON.parse(ajax.responseText); // Decodage des donnees
+				console.log(data);
+				var debutPartie = data[2];
+				DateDeFinEnMilliSeconde = debutPartie
+				compte_a_rebours_DEBUT_PARTIE();
+    
+			} 
+		}
+	); 
+    
+    // Envoi de la requete
+	ajax.send();
+};
 
 
 
@@ -686,9 +709,6 @@ window.addEventListener('load',function (e){
 	recup = document.getElementById("recup");
 	recup.addEventListener("click", function(){functionAction("recup")}, false);
 
-
-    var debutPartie = new Date().getTime()+dureePartie;
-    DateDeFinEnMilliSeconde = debutPartie
-	compte_a_rebours_DEBUT_PARTIE();
+	requeteAjaxDebutPartie();
     
     } ,false);
