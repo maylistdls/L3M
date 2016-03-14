@@ -56,10 +56,14 @@ try {
       sleep(2);
     }
     $stmt = $db->prepare('SELECT loc FROM qg');
-    $stmt->bindParam(':id', $id);
     $stmt->execute();
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $locqg = $stmt->fetchAll();
+    $rows = $stmt->fetchAll();
+    $locqg=Array();
+    foreach ($rows as $row) {
+      $loc=$row['loc'];
+      $locqg[]=$loc;
+    }
 	  $envoi=Array($locqg,$id,time()+30);
     $stmt = $db->prepare('UPDATE sync SET d_sync=0');
     $stmt->execute();
