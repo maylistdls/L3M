@@ -3,7 +3,6 @@
 try {
     require 'connexion.php';
 // ---- Initialisation ----
-    $compte = 6;
     $tour = $db->prepare('UPDATE perso SET regen=0, protec=1, recup=0, tir=0, assaut=0, etat=0 WHERE id=:id');
     $tour->bindParam(':id', $_POST['id']);
     $tour->execute();
@@ -145,7 +144,7 @@ try {
           $stmt->execute();
           $rows = $stmt->fetch(PDO::FETCH_ASSOC);
         // ---- Le premier arrivé ou le retardataire ----
-        if ($rows['t_sync'] == 0 || ($rows['t_sync'] + 1000) < time()) {
+        if ($rows['t_sync'] == 0 || ($rows['t_sync'] + 9) < time()) {
             $stmt = $db->prepare('UPDATE sync SET t_sync=:temps');
             $stmt->bindParam(':temps', time());
             $stmt->execute();
@@ -153,8 +152,8 @@ try {
         // ---- l'attente ----
         while ($rows['c_sync'] != 1) {
             // ---- si il arrive dans les 10sec du premier ----
-          if (time() < $rows['t_sync'] + 10000) {
-              sleep(round((time() - $rows['t_sync']) / 1000) + 4);
+          if (time() < $rows['t_sync'] + 10) {
+              sleep(round(time() - $rows['t_sync']) + 4);
               $stmt = $db->prepare('SELECT c_sync FROM sync');
               $stmt->execute();
               $rows = $stmt->fetch(PDO::FETCH_ASSOC);

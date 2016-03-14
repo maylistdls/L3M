@@ -10,7 +10,7 @@ try {
     $stmt->execute();
     $rows = $stmt->fetch(PDO::FETCH_ASSOC);
 	$id = $rows['d_sync'];
-    while ($rows['d_sync']<5) {
+    while ($rows['d_sync']<6) {
       sleep(10);
       $stmt = $db->prepare('SELECT d_sync FROM sync');
       $stmt->execute();
@@ -55,7 +55,7 @@ try {
     else{
       sleep(2);
     }
-    $stmt = $db->prepare('SELECT loc FROM qg WHERE equipe=(SELECT equipe FROM perso WHERE id=:id)');
+    $stmt = $db->prepare('SELECT loc FROM qg');
     $stmt->bindParam(':id', $id);
     $stmt->execute();
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
