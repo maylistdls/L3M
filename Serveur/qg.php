@@ -4,7 +4,9 @@ try {
     require 'connexion.php';
     $xg=0;
     $yg=0;
-    $stmt = $db->prepare('UPDATE sync SET d_sync=d_sync+1');
+    $tmps=time();
+    $stmt = $db->prepare('UPDATE sync SET d_sync=d_sync+1, r_sync=:temps');
+    $stmt->bindParam(':temps',$tmps);
     $stmt->execute();
     $stmt = $db->prepare('SELECT * FROM sync');
     $stmt->execute();
@@ -64,10 +66,15 @@ try {
       $loc=$row['loc'];
       $locqg[]=$loc;
     }
-	  $envoi=Array($locqg,$id,time()+30);
+    $stmt = $db->prepare('SELECT r_sync FROM sync');
+    $stmt->execute();
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $tps = $stmt->fetchAll();
+	  $envoi=Array($locqg,$id,$tps+30);
+    echo json_encode($envoi);
+    sleep(15);
     $stmt = $db->prepare('UPDATE sync SET d_sync=0');
     $stmt->execute();
-    echo json_encode($envoi);
   } catch (Exception $e) {
       echo "<h1 align='center'>Error about the start!</h1>";
       echo $e;
