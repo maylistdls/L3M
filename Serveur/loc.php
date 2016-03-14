@@ -7,8 +7,6 @@ try {
 		$stmt->bindParam(':id',$_POST['id']);
     $stmt->execute();
 
-
-		// Pour simuler le joueur 6 qui se déplace sur la carte
     $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
 		$stmt->bindParam(':loc',$_POST['loc']);
 		$stmt->bindParam(':id',$_POST['id']);

@@ -94,6 +94,7 @@ try {
         $stmt2->bindParam(':etat', $_POST['etat']);
         $stmt2->execute();
     }
+    /* trop puissant: à revoir plus tard
 // ---- PROTECTION ----
     elseif ($_POST['etat'] == 'protec') {
         $stmt2 = $db->prepare('UPDATE perso SET protec=0.5, regen=capa*0.25,obs=50, etat=:etat WHERE id=:id');
@@ -101,6 +102,7 @@ try {
         $stmt2->bindParam(':etat', $_POST['etat']);
         $stmt2->execute();
     }
+    */
 // ---- RECUPERATION ----
     elseif ($_POST['etat'] == 'recup') {
         $stmt2 = $db->prepare('UPDATE perso SET recup=capa*3,assaut=assaut*10,tir=tir*10,obs=50, etat=:etat WHERE id=:id');
@@ -131,7 +133,7 @@ try {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $rows = $stmt->fetchAll();
         foreach ($rows as $row) {
-            $stmt = $db->prepare('UPDATE perso SET capa=capa+regen+recup-(protec*(tir+assaut)) WHERE id=:id');
+            $stmt = $db->prepare('UPDATE perso SET capa=capa+regen+recup-(protec*tir)-assaut WHERE id=:id');
             $stmt->bindParam(':id', $row['id']);
             $stmt->execute();
         }

@@ -19,19 +19,12 @@ try {
       $rows = $stmt->fetch(PDO::FETCH_ASSOC);
     }
     if ($id==1){
-      $stmt = $db->prepare('SELECT loc FROM perso WHERE equipe=(SELECT equipe FROM perso WHERE id=:id)');
-      $stmt->bindParam(':id', $id);
-      $stmt->execute();
-      $stmt->setFetchMode(PDO::FETCH_ASSOC);
-      $rows = $stmt->fetchAll();
-      foreach ($rows as $row) {
-        $xg=$xg+substr($row['loc'],1,strpos($row['loc'],",")-1);
-        $yg=$yg+substr($row['loc'],strpos($row['loc'],",")+1,strpos($row['loc'],")")-1);
-      }
+      $xg=substr($_POST['loc'],1,strpos($_POST['loc'],",")-1);
+      $yg=substr($_POST['loc'],strpos($_POST['loc'],",")+1,strpos($_POST['loc'],")")-1);
       $stmt = $db->prepare('INSERT INTO qg (capa,equipe,qg_bat,loc) VALUES (1000,(SELECT equipe FROM perso WHERE id=:id),TRUE,POINT(:x,:y))');
       $stmt->bindParam(':id', $id);
-      $xg = (float)$xg/3;
-      $yg = (float)$yg/3;
+      $xg = $xg;
+      $yg = $yg;
       $stmt->bindParam(':x', $xg);
       $stmt->bindParam(':y', $yg);
       $stmt->execute();
