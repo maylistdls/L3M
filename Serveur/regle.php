@@ -6,8 +6,6 @@ try {
     $tour = $db->prepare('UPDATE perso SET regen=0, protec=1, recup=0, tir=0, assaut=0, etat=0 WHERE id=:id');
     $tour->bindParam(':id', $_POST['id']);
     $tour->execute();
-    $tour2 = $db->prepare('UPDATE sync SET c_sync=FALSE');
-    $tour2->execute();
 // ---- OBSERVATION ----
     if ($_POST['etat'] == 'obs') {
         $stmt2 = $db->prepare('UPDATE perso SET obs=obs+50, regen=capa*0.25, etat=:etat WHERE id=:id');
@@ -63,12 +61,12 @@ try {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $rows = $stmt->fetchAll();
         foreach ($rows as $row) {
-          if ($row['id'] != '') {
-            $up = $db->prepare('UPDATE perso SET tir=round(100000/(loc<->(SELECT loc FROM perso WHERE id=:id))) WHERE id=:ad');
-            $up->bindParam(':id', $_POST['id']);
-            $up->bindParam(':ad', $row['id'], PDO::PARAM_INT);
-            $up->execute();
-          }
+            if ($row['id'] != '') {
+                $up = $db->prepare('UPDATE perso SET tir=round(100000/(loc<->(SELECT loc FROM perso WHERE id=:id))) WHERE id=:ad');
+                $up->bindParam(':id', $_POST['id']);
+                $up->bindParam(':ad', $row['id'], PDO::PARAM_INT);
+                $up->execute();
+            }
         }
         $stmt = $db->prepare('SELECT id FROM qg WHERE
           (loc<->(SELECT loc FROM perso WHERE id=:id))<=100 AND
@@ -82,12 +80,12 @@ try {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $rows = $stmt->fetchAll();
         foreach ($rows as $row) {
-          if ($row['id'] != '') {
-            $up = $db->prepare('UPDATE qg SET capa=capa-round(100000/(loc<->(SELECT loc FROM perso WHERE id=:id))) WHERE id=:ad');
-            $up->bindParam(':id', $_POST['id']);
-            $up->bindParam(':ad', $row['id'], PDO::PARAM_INT);
-            $up->execute();
-          }
+            if ($row['id'] != '') {
+                $up = $db->prepare('UPDATE qg SET capa=capa-round(100000/(loc<->(SELECT loc FROM perso WHERE id=:id))) WHERE id=:ad');
+                $up->bindParam(':id', $_POST['id']);
+                $up->bindParam(':ad', $row['id'], PDO::PARAM_INT);
+                $up->execute();
+            }
         }
         $stmt2 = $db->prepare('UPDATE perso SET regen=capa*0.25,obs=50, etat=:etat WHERE id=:id');
         $stmt2->bindParam(':id', $_POST['id']);
@@ -137,46 +135,35 @@ try {
             $stmt->bindParam(':id', $row['id']);
             $stmt->execute();
         }
-        $stmt = $db->prepare('UPDATE sync SET c_sync=TRUE');
+        $stmt = $db->prepare('UPDATE sync SET c_sync=TRUE, t_sync=:temps');
+        $stmt->bindParam(':temps', time());
         $stmt->execute();
     }
 // ---- Attente ----
-      else {
-          $stmt = $db->prepare('SELECT * FROM sync');
-          $stmt->execute();
-          $rows = $stmt->fetch(PDO::FETCH_ASSOC);
-        // ---- Le premier arrivé ou le retardataire ----
-        if ($rows['t_sync'] == 0 || ($rows['t_sync'] + 9) < time()) {
-            $stmt = $db->prepare('UPDATE sync SET t_sync=:temps');
-            $stmt->bindParam(':temps', time());
-            $stmt->execute();
-        }
-        // ---- l'attente ----
+    else {
+        $stmt = $db->prepare('SELECT * FROM sync');
+        $stmt->execute();
+        $rows = $stmt->fetch(PDO::FETCH_ASSOC);
         while ($rows['c_sync'] != 1) {
-            // ---- si il arrive dans les 10sec du premier ----
-          if (time() < $rows['t_sync'] + 10) {
-              sleep(round(time() - $rows['t_sync']) + 4);
-              $stmt = $db->prepare('SELECT c_sync FROM sync');
-              $stmt->execute();
-              $rows = $stmt->fetch(PDO::FETCH_ASSOC);
-          } else {
-              $stmt = $db->prepare('UPDATE sync SET t_sync=:temps');
-              $stmt->bindParam(':temps', time());
-              $stmt->execute();
-              $rows = $stmt->fetch(PDO::FETCH_ASSOC);
-          }
+            sleep(2);
+            $stmt = $db->prepare('SELECT c_sync FROM sync');
+            $stmt->execute();
+            $rows = $stmt->fetch(PDO::FETCH_ASSOC);
         }
-      }
+    }
     $stmt2 = $db->prepare('SELECT capa,obs FROM perso WHERE id=:id');
     $stmt2->bindParam(':id', $_POST['id']);
     $stmt2->execute();
     $envoi1 = $stmt2->fetch(PDO::FETCH_ASSOC);
-    $stmt2 = $db->prepare('SELECT capa FROM qg WHERE equipe=(SELECT equipe FROM perso WHERE id=:id)');
+    $stmt2 = $db->prepare('SELECT capa FROM qg');
     $stmt2->bindParam(':id', $_POST['id']);
     $stmt2->execute();
     $envoi2 = $stmt2->fetch(PDO::FETCH_ASSOC);
-    $envoi = Array ($envoi1,$envoi2);
+    $envoi = array($envoi1, $envoi2);
     echo json_encode($envoi);
+    sleep(3);
+    $tour2 = $db->prepare('UPDATE sync SET c_sync=FALSE');
+    $tour2->execute();
 } catch (Exception $e) {
     echo "<h1 align='center'>Error about the action!</h1>";
     echo $e;

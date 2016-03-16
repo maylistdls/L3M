@@ -2,74 +2,29 @@
 
 try {
     require 'connexion.php';
-    $xg=0;
-    $yg=0;
-    $tmps=time();
-    $stmt = $db->prepare('UPDATE sync SET d_sync=d_sync+1, r_sync=:temps');
-    $stmt->bindParam(':temps',$tmps);
+// ---- Compteur de joueurs ----
+    $stmt = $db->prepare('UPDATE sync SET d_sync=d_sync+1');
     $stmt->execute();
-    $stmt = $db->prepare('SELECT * FROM sync');
+// ---- Recupere le nombre de joueurs en attente ----
+    $stmt = $db->prepare('SELECT d_sync FROM sync');
     $stmt->execute();
     $rows = $stmt->fetch(PDO::FETCH_ASSOC);
-	  $id = $rows['d_sync'];
-    while ($rows['d_sync']<6) {
-      sleep(10);
-      $stmt = $db->prepare('SELECT d_sync FROM sync');
-      $stmt->execute();
-      $rows = $stmt->fetch(PDO::FETCH_ASSOC);
+// ---- Identifiant dans le jeu (correspond à l'ordre d'arrivee) ----
+    $id = $rows['d_sync'];
+// ---- Attente des 6 joueurs ----
+    while ($rows['d_sync'] < 6) {
+        sleep(5);
+        $stmt = $db->prepare('SELECT d_sync FROM sync');
+        $stmt->execute();
+        $rows = $stmt->fetch(PDO::FETCH_ASSOC);
     }
-    if ($id==1){
-      $xg=substr($_POST['loc'],1,strpos($_POST['loc'],",")-1);
-      $yg=substr($_POST['loc'],strpos($_POST['loc'],",")+1,strpos($_POST['loc'],")")-1);
-      $stmt = $db->prepare('INSERT INTO qg (capa,equipe,qg_bat,loc) VALUES (1000,(SELECT equipe FROM perso WHERE id=:id),TRUE,POINT(:x,:y))');
-      $stmt->bindParam(':id', $id);
-      $xg = $xg;
-      $yg = $yg;
-      $stmt->bindParam(':x', $xg);
-      $stmt->bindParam(':y', $yg);
-      $stmt->execute();
-    }
-    elseif ($id==2){
-      $stmt = $db->prepare('SELECT loc FROM perso WHERE equipe=(SELECT equipe FROM perso WHERE id=:id)');
-      $stmt->bindParam(':id', $id);
-      $stmt->execute();
-      $stmt->setFetchMode(PDO::FETCH_ASSOC);
-      $rows = $stmt->fetchAll();
-      foreach ($rows as $row) {
-        $xg=$xg+substr($row['loc'],1,strpos($row['loc'],",")+1);
-        $yg=$yg+substr($row['loc'],strpos($row['loc'],",")+1,strpos($row['loc'],")")+1);
-      }
-      $stmt = $db->prepare('INSERT INTO qg (capa,equipe,qg_bat,loc) VALUES (1000,(SELECT equipe FROM perso WHERE id=:id),TRUE,POINT(:x,:y))');
-      $stmt->bindParam(':id', $id);
-      $xg = (float)$xg/3;
-      $yg = (float)$yg/3;
-      $stmt->bindParam(':x', $xg);
-      $stmt->bindParam(':y', $yg);
-      $stmt->execute();
-    }
-    else{
-      sleep(2);
-    }
-    $stmt = $db->prepare('SELECT loc FROM qg');
-    $stmt->execute();
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $rows = $stmt->fetchAll();
-    $locqg=Array();
-    foreach ($rows as $row) {
-      $loc=$row['loc'];
-      $locqg[]=$loc;
-    }
-    $stmt = $db->prepare('SELECT r_sync FROM sync');
-    $stmt->execute();
-    $tps = $stmt->fetch(PDO::FETCH_ASSOC);
-    $tps=(int)$tps['r_sync']+30;
-	  $envoi=Array($locqg,$id,$tps);
-    echo json_encode($envoi);
-    sleep(15);
+// ---- Envoi de l'identifiant ----
+    echo $id;
+// ---- Remise a zero du compteur de joueurs ----
+    sleep(6);
     $stmt = $db->prepare('UPDATE sync SET d_sync=0');
     $stmt->execute();
-  } catch (Exception $e) {
-      echo "<h1 align='center'>Error about the start!</h1>";
-      echo $e;
-    }
-?>
+} catch (Exception $e) {
+    echo "<h1 align='center'>Error about the sync!</h1>";
+    echo $e;
+}
