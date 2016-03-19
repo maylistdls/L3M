@@ -38,6 +38,7 @@ var envoieRequete;
 var roundDeg;
 var rayon = 70;	
 var angleParRapportAuNord = 0;
+var equipe = 1;
 
 
 
@@ -51,6 +52,10 @@ var protection;
 var recup;
 var progressBar;
 var QGBar;
+var initialisation;
+var information_initialisation;
+var map_initialisation;
+
 
 
 
@@ -617,6 +622,7 @@ function requeteAjaxAction(requete)
         { 
 			if(ajax.readyState == 4 && ajax.status == 200)  // Si le .php a bien renvoyé des données
 			{
+                console.log("nouveau tour ! ");
                 DateDeFinEnMilliSeconde = dateProchainEnvoi; 
                 var data = JSON.parse(ajax.responseText); // Decodage des donnees	           
                 console.log(data); // Execution de l'affichage
@@ -667,11 +673,11 @@ function requeteAjaxLocalisation(requete)
 
 
 
-function requeteAjaxDebutPartie() 
+function requeteAjaxPlacementQG() 
 {
     // Connexion au fichier php
 	var ajax = new XMLHttpRequest(); 
-	ajax.open('POST', '../Serveur/qg.php', true); 
+	ajax.open('POST', '../Serveur/recupIdentifiant.php', true); 
 	ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
 	
     // Ecoute de la reponse
@@ -680,13 +686,54 @@ function requeteAjaxDebutPartie()
         { 
 			if(ajax.readyState == 4 && ajax.status == 200)  // Si le .php a bien renvoyé des données
 			{
-				console.log(ajax.responseText);
-                var data = JSON.parse(ajax.responseText); // Decodage des donnees
-				console.log(data);
-				var debutPartie = data[2];
-				id = data[1];
-				DateDeFinEnMilliSeconde = debutPartie*1000;
-				compte_a_rebours_DEBUT_PARTIE();
+				var data = JSON.parse(ajax.responseText); // Decodage des donnees
+				id = data.identifiant;
+                equipe = data.equipe;
+
+                initialisation.style.visibility = "visible";
+
+                if (id == 1 || id == 2 )
+                {
+                    information_initialisation.innerHTML+="Vous êtes le capitaine de l'équipe "+equipe+"! Rassemblez vos équipiers et choisissez la localisation de votre QG";
+                    document.getElementById("map_initialisation").style.visibility = "visible";
+                    marker = new google.maps.Marker({
+                      map: map_initialisation,
+                      draggable: true,
+                      animation: google.maps.Animation.DROP,
+                      position: latlng
+                    });
+
+                    google.maps.event.addListener(marker, 'dragend', function()
+                    {
+                        console.log(marker.getPosition().lat(), marker.getPosition().lng());
+                    });
+
+                    var btnValider = document.createElement("BUTTON");        // Create a <button> element
+                    var text = document.createTextNode("Valider");       // Create a text node
+                    btnValider.appendChild(text);                                // Append the text to <button>
+                    initialisation.appendChild(btnValider);                    // Append <button> to <body>
+                    btnValider.addEventListener("click", function(){
+                        console.log(marker.getPosition().lat(), marker.getPosition().lng());
+                        initialisation.style.visibility = "hidden";
+
+                        document.getElementById("map_initialisation").style.visibility = "hidden";
+                        requeteAjaxPlacementBatterie("equipe="+equipe+"&QGlat="+marker.getPosition().lat()+"&QGlon="+marker.getPosition().lng()) 
+                    });
+
+                    
+                }
+                else
+                {
+                    information_initialisation.innerHTML+="Rejoignez le capitaine de l'équipe "+equipe+" pour déterminer la localisation de votre QG";
+                    requeteAjaxPlacementBatterie("");
+                }
+                
+
+               
+
+
+				//DateDeFinEnMilliSeconde = debutPartie*1000;
+				//compte_a_rebours_DEBUT_PARTIE();
     
 			} 
 		}
@@ -694,6 +741,102 @@ function requeteAjaxDebutPartie()
     
     // Envoi de la requete
 	ajax.send();
+};
+
+
+
+
+
+// Requete Ajax pour la mise à jour de la localisation
+function requeteAjaxPlacementBatterie(requete) 
+{
+    // Connexion au fichier php
+    var ajax = new XMLHttpRequest(); 
+    ajax.open('POST', '../Serveur/QGplaces.php', true); 
+    ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
+    
+    // Ecoute de la reponse
+    ajax.addEventListener('readystatechange', 
+        function(e) 
+        { 
+            if(ajax.readyState == 4 && ajax.status == 200)  // Si le .php a bien renvoyé des données
+            {
+                var data = JSON.parse(ajax.responseText); // Decodage des donnees       
+                console.log(data); // Execution de l'affichage
+                if (data=="chooseYourBatteryLocation")
+                {
+                    console.log("ok");
+                    information_initialisation.innerHTML = "Maintenant choississez la position de votre batterie";
+                    initialisation.style.visibility = "visible";
+                    document.getElementById("map_initialisation").style.visibility = "visible";
+                    marker.setMap(null);
+                    initialisation.removeChild(initialisation.getElementsByTagName("button")[0]);
+                    marker = new google.maps.Marker({
+                      map: map_initialisation,
+                      draggable: true,
+                      animation: google.maps.Animation.DROP,
+                      position: latlng
+                    });
+
+                    google.maps.event.addListener(marker, 'dragend', function()
+                    {
+                        console.log(marker.getPosition().lat(), marker.getPosition().lng());
+                    });
+
+                    var btnValider = document.createElement("BUTTON");        // Create a <button> element
+                    var text = document.createTextNode("Valider la batterie");       // Create a text node
+                    btnValider.appendChild(text);                                // Append the text to <button>
+                    initialisation.appendChild(btnValider);                    // Append <button> to <body>
+                    btnValider.addEventListener("click", function(){
+                        console.log(marker.getPosition().lat(), marker.getPosition().lng());
+                        initialisation.style.visibility = "hidden";
+
+                        document.getElementById("map_initialisation").style.visibility = "hidden";
+                        requeteAjaxDebutPartie("joueur="+id+"&Batterielat="+marker.getPosition().lat()+"&Batterielon="+marker.getPosition().lng()) 
+                    });
+
+                }
+            } 
+        }
+    ); 
+    
+    // Envoi de la requete
+    ajax.send(requete);
+};
+
+
+
+
+
+
+function requeteAjaxDebutPartie(requete) 
+{
+    // Connexion au fichier php
+    var ajax = new XMLHttpRequest(); 
+    ajax.open('POST', '../Serveur/startGame.php', true); 
+    ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
+    
+    // Ecoute de la reponse
+    ajax.addEventListener('readystatechange', 
+        function(e) 
+        { 
+            if(ajax.readyState == 4 && ajax.status == 200)  // Si le .php a bien renvoyé des données
+            {
+                marker.setMap(null);
+                document.body.removeChild(initialisation);
+                var data = JSON.parse(ajax.responseText); // Decodage des donnees
+                console.log(data)
+                var debutPartie = data[1];
+                console.log(debutPartie);
+                DateDeFinEnMilliSeconde = debutPartie*1000;
+                compte_a_rebours_DEBUT_PARTIE();
+    
+            } 
+        }
+    ); 
+    
+    // Envoi de la requete
+    ajax.send(requete);
 };
 
 
@@ -801,6 +944,29 @@ window.addEventListener('load',function (e){
     document.getElementsByClassName("rs-container")[0].style.width = "100%";
     document.getElementsByClassName("rs-container")[0].style.height = "100%";
 
-	requeteAjaxDebutPartie();
+
+    initialisation = document.getElementById("initialisation");
+    information_initialisation = document.getElementById("information_initialisation");
+    
+
+    initialisation.style.visibility = "hidden";
+    map_initialisation = new google.maps.Map(document.getElementById("map_initialisation"),
+    {
+        center:new google.maps.LatLng(0,0),
+        zoom:18,
+        
+    });
+
+    map_initialisation.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+
+    document.getElementById("map_initialisation").style.visibility = "hidden";
+    navigator.geolocation.getCurrentPosition(function(position){
+        latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        map_initialisation.panTo(latlng);
+
+    },errorCallback,{enableHighAccuracy : true, timeout:100000, maximumAge:100000});
+    
+    
+	requeteAjaxPlacementQG();
     
     } ,false);

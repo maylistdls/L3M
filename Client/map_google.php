@@ -18,6 +18,10 @@
     <body>
         <div id="compteARebours">
         </div>
+        <div id="initialisation">
+            <div id="information_initialisation"></div>
+            <div id="map_initialisation"></div>
+        </div>
         <div id="partieLancee">
             <div id="jauges">
                 <p>QG :

@@ -1,4 +1,16 @@
-19 03 2016 15h 
+19 03 2016 19h 22h30
+Modification de la procedure de lancement de partie.
+Coté client : 
+- A la connexion, récupération de l'identifiant et de l'équipe du joueur (permet de savoir s'il s'agit du capitaine ou non)
+- Proposition de placement de QG pour les capitaines
+- Une fois les QG placés, les joueurs sont amenés à placer chacun une batterie
+- Une fois toutes les batteries placées, le serveur envoie lance la partie (il faut encore que le serveur renvoie les localisations des QG / batteries et à les afficher sur la carte)
+Coté serveur :
+Création des pages qui permettent de renvoyer les informations aux clients (recupIdentifiant, QGplacés et startGame)
+
+
+
+19 03 2016 15h - 18h
 Création d'une page serveur reset.php qui permet de simuler 5 joueurs déjà connectés au serveur en attente de lancement de partie
 Intégration d'un slider circulaire (compatible smartphone) à la page de jeu
 Test du slider circulaire

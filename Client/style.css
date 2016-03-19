@@ -32,6 +32,19 @@ body {
 	vertical-align : center;
 } 
 
+#map_initialisation {
+    position : relative;
+    height:500px;
+    width:500px;
+    margin-top : 50%;
+    margin:auto;
+    z-index:1;
+    border-radius:1000px;
+    left:0; right:0; bottom:0; top:0;
+    vertical-align : center;
+} 
+
+
 #rotationSliderContainer { 
     position: absolute;
     width: 550px;
