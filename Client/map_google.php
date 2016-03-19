@@ -5,9 +5,14 @@
         <title>
 			Carte Google Orientée
         </title>
-		<link rel="stylesheet" href="style.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js" ></script>
+		
+        <link href="dist/roundslider.min.css" rel="stylesheet" />
+    	<script src="dist/roundslider.min.js"></script>
+
 		<link rel="stylesheet" href="boussole.css" />
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js" ></script>
+		<link href="style.css" rel="stylesheet" />
+
 		
     </head>
     <body>
@@ -31,7 +36,7 @@
                 </div>
             <div id="placement_carte_cercle">
                 <div id="rotationSliderContainer">
-                    <div id="rotationSlider"></div>
+                    <div id="rotationSlider" class="rslider"></div>
                     <!--<div id="rotationSliderDegrees">0&deg;</div>-->
                     <div id="map"></div>
                 </div>

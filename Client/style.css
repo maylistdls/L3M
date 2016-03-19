@@ -86,3 +86,19 @@ button {
     position: relative;
     cursor: pointer
 }
+
+.rs-control .rs-range-color {
+    background-color: #48cdfc;
+}
+.rs-control .rs-path-color {
+    background-color: #b3b3b3;
+}
+.rs-control .rs-handle {
+    background-color: #707070;
+}
+
+#rotationSlider {
+    width:800px;
+    visibility: visible;
+    
+}

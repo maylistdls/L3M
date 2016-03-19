@@ -27,8 +27,8 @@ var superposition = 0;
 //Variables globales pour le jeu 
 var capaMax = 10000;
 var capa = capaMax;
-var dureeTourDeJeu = 5000; //120000 = 2 minutes
-var dureePartie = 5000; //120000 = 2 minutes
+var dureeTourDeJeu = 30000; //120000 = 2 minutes
+var dureePartie = 60000; //120000 = 2 minutes
 var id = 4;
 var etat = 'obs';
 var directionTir = '0';
@@ -285,7 +285,17 @@ var tourne_camembert = function (angle){
 
 
 
+	
+function tooltipVal2(args) {
+	var roundDeg = args.value;
+	angleParRapportAuNord = roundDeg;
+    parametrageDerniereAction.innerHTML = "Angle : "+roundDeg+" degrés";
+    tourne_camembert(roundDeg);
+			
+    return roundDeg+"°";
+}
 
+/*
 $(function(){
     var $zoneEcouteur = $('body');
     var $container = $('#rotationSliderContainer');
@@ -305,7 +315,9 @@ $(function(){
     var mdown = false;
     $zoneEcouteur
     .mousedown(function (e) { mdown = true; e.originalEvent.preventDefault(); })
+    .touchstart(function (e) { mdown = true; e.originalEvent.preventDefault(); })
     .mouseup(function (e) { mdown = false; })
+    .touchend(function (e) { mdown = false; })
     .mousemove(function (e) {
         if(mdown && document.getElementById("rotationSlider").style.visibility == "visible")
         {
@@ -350,9 +362,62 @@ $(function(){
             tourne_camembert(roundDeg);
                 
         }
+    })
+	.touchmove(function (e) {
+        if(mdown && document.getElementById("rotationSlider").style.visibility == "visible")
+        {
+			
+			
+			var touchobj = e.changedTouches[0] // reference first touch point (ie: first finger)
+			
+			var startx = parseInt(touchobj.clientX) // get x position of touch point relative to left edge of browser
+			var starty = parseInt(touchobj.clientY) // get x position of touch point relative to left edge of browser
+			
+			// firefox compatibility
+            if(typeof e.offsetX === "undefined" || typeof e.offsetY === "undefined") {
+               var targetOffset = $(e.target).offset();
+               startx = e.pageX - targetOffset.left;
+               starty = e.pageY - targetOffset.top;
+            }
+			
+			
+            
+            if($(e.target).is('#rotationSliderContainer'))
+                var mPos = {x: startx, y: starty};
+            else
+                var mPos = {x: e.target.offsetLeft + startx, y: e.target.offsetTop + startx};
+                
+            var atan = Math.atan2(mPos.x-radius, mPos.y-radius);
+            deg = -atan/(Math.PI/180) + 180; // final (0-360 positive) degrees from mouse position 
+            
+            
+            // for attraction to multiple of 90 degrees
+            var distance = Math.abs( deg - ( Math.round(deg / 90) * 90 ) );
+            
+            if( distance <= 5 )
+                deg = Math.round(deg / 90) * 90;
+                
+            if(deg == 360)
+                deg = 0;
+            
+            X = Math.round(radius* Math.sin(deg*Math.PI/180));
+            Y = Math.round(radius*  -Math.cos(deg*Math.PI/180));
+
+            $slider.css({ left: X+radius-sliderWidth/2, top: Y+radius-sliderHeight/2 });
+            
+            roundDeg = Math.round(deg);
+            
+            $degrees.html(roundDeg + '&deg;');
+            $('#imageRotateDegrees').val(roundDeg);
+            
+            angleParRapportAuNord = roundDeg;
+            parametrageDerniereAction.innerHTML = "Angle : "+roundDeg+" degrés";
+            tourne_camembert(roundDeg);
+                
+        }
     });
 });
-
+*/
 
 
 
@@ -449,7 +514,7 @@ function compte_a_rebours_DEBUT_PARTIE()
     var secondes = "";
     var suffixe = "";
 	var prefixe = "Lancement de la partie dans ";
-    console.log(total_secondes);
+    //console.log(total_secondes);
 	if (total_secondes < 0)
 	{
         document.getElementById("partieLancee").style.visibility = "visible";
@@ -615,10 +680,12 @@ function requeteAjaxDebutPartie()
         { 
 			if(ajax.readyState == 4 && ajax.status == 200)  // Si le .php a bien renvoyé des données
 			{
+				console.log(ajax.responseText);
                 var data = JSON.parse(ajax.responseText); // Decodage des donnees
 				console.log(data);
 				var debutPartie = data[2];
-				DateDeFinEnMilliSeconde = debutPartie
+				id = data[1];
+				DateDeFinEnMilliSeconde = debutPartie*1000;
 				compte_a_rebours_DEBUT_PARTIE();
     
 			} 
@@ -708,6 +775,31 @@ window.addEventListener('load',function (e){
 
 	recup = document.getElementById("recup");
 	recup.addEventListener("click", function(){functionAction("recup")}, false);
+
+
+    $("#rotationSlider").roundSlider({
+    sliderType: "min-range",
+    min: 0,
+    max: 359,
+    value: 0,
+    startAngle: 90,
+    tooltipFormat: tooltipVal2
+});
+
+    
+    document.getElementById("rotationSlider").style.visibility = "hidden";
+    document.getElementById("rotationSlider").style.opacity = "0.4";
+    document.getElementById("rotationSlider").style.position = "relative";
+    document.getElementById("rotationSlider").style.width = "100%";
+    document.getElementById("rotationSlider").style.height = "100%";
+    document.getElementById("rotationSlider").style.borderRadius = "550px";
+    //document.getElementById("rotationSlider").style.zIndex = "-1";
+    document.getElementById("rotationSlider").style.border = "0px solid";
+
+
+    document.getElementsByClassName("rs-container")[0].style.position = "relative";
+    document.getElementsByClassName("rs-container")[0].style.width = "100%";
+    document.getElementsByClassName("rs-container")[0].style.height = "100%";
 
 	requeteAjaxDebutPartie();
     

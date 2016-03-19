@@ -1,3 +1,23 @@
+19 03 2016 15h 
+Création d'une page serveur reset.php qui permet de simuler 5 joueurs déjà connectés au serveur en attente de lancement de partie
+Intégration d'un slider circulaire (compatible smartphone) à la page de jeu
+Test du slider circulaire
+
+
+14 03 2016 19h 20h30
+Reunion commanditaire
+Discussion autour de la procédure de placement des QG... Cela va impliquer de modifier les requetes de connexion à la fois côté client, et également côté serveur... Surtout qu'on a lancé les tests d'intégrations (ce qui signifie que le serveur attend 6 connexions avant de déclencher la procedure de lancement de partie) 
+
+
+14 03 2016 13h30 17h
+Configuration des lancements de parties. Début des tests d'intégrations
+-> Détection d'un problème lié aux évenements sur téléphones... 
+-> Recherche de solutions pour faire tourner le champs de tir et de protection
+-> Une solution a été trouvée ... il faut revoir notre curseur circulaire et intégrer la solution dans notre code
+-> Détection d'un probleme de synchronisation lié au serveur web actuellement utilisé (celui mis à disposition à l'école...) Connection time out
+-> Hébergement de la partie serveur sur alwaysdata 
+
+
 08 03 2016 14h - 14h40
 Session du 07 03 2016 recommencée (probleme synchronisation github... tout le travail d'hier a du être refait...)
 
