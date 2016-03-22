@@ -41,6 +41,7 @@ var angleParRapportAuNord = 0;
 var equipe = 1;
 var listeQG = new Object();
 var listeBatterie = new Object();
+var partie = 0;
 
 
 // Variables globales pour l'interface
@@ -779,7 +780,7 @@ function requeteAjaxInformationJoueur()
 {
     // Connexion au fichier php
 	var ajax = new XMLHttpRequest(); 
-	ajax.open('POST', 'Loic/testServeur/recupIdentifiant.php', true); 
+	ajax.open('POST', '../Serveur/qg.php', true); 
 	ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
 	
     // Ecoute de la reponse
@@ -791,6 +792,7 @@ function requeteAjaxInformationJoueur()
 				var data = JSON.parse(ajax.responseText); // Decodage des donnees
 				id = data.identifiant;
                 equipe = data.equipe;
+                partie = data.identifiantPartie;
                 document.getElementById("equipe").innerHTML="Equipe "+equipe;
                 initialisation.style.visibility = "visible";
 
@@ -985,7 +987,7 @@ function requeteAjaxInformationJoueur()
                 		else if (init == 5)
                 		{
                             initialisation.style.visibility = "hidden";
-                            requeteAjaxDebutPartie2("listeQG="+JSON.stringify(listeQG)+"&listeBatterie="+JSON.stringify(listeBatterie));
+                            requeteAjaxDebutPartie2("listeQG="+JSON.stringify(listeQG)+"&listeBatterie="+JSON.stringify(listeBatterie)+"&partie="+partie);
                 		}
                         
                         //requeteAjaxPlacementQG("equipe="+equipe+"&QGlat="+marker.getPosition().lat()+"&QGlon="+marker.getPosition().lng()) 
@@ -1005,7 +1007,7 @@ function requeteAjaxInformationJoueur()
                     btnLancement.addEventListener("click", function(){
                         initialisation.style.visibility = "hidden";
                         //requeteAjaxPlacementBatterie("equipe="+equipe+"&QGlat="+marker.getPosition().lat()+"&QGlon="+marker.getPosition().lng())
-                        requeteAjaxDebutPartie2(); 
+                        requeteAjaxDebutPartie2("partie="+partie); 
                     });
                 }
                 
@@ -1155,7 +1157,7 @@ function requeteAjaxDebutPartie2(requete)
 {
     // Connexion au fichier php
     var ajax = new XMLHttpRequest(); 
-    ajax.open('POST', 'Loic/testServeur/startGame2.php', true); 
+    ajax.open('POST', '../Serveur/start.php', true); 
     ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
     
     // Ecoute de la reponse
