@@ -1,7 +1,7 @@
 <?php
 
 try {
-    require 'connexion.php';
+    require '../../../Serveur/connexion.php';
     $tmps=time();
     $stmt = $db->prepare('UPDATE sync SET d_sync=5, r_sync=:temps');
     $stmt->bindParam(':temps',$tmps);

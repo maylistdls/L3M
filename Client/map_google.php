@@ -16,10 +16,12 @@
 		
     </head>
     <body>
+        <div id="equipe"></div>
         <div id="compteARebours">
         </div>
         <div id="initialisation">
             <div id="information_initialisation"></div>
+            <div id="etape_en_cours"></div>
             <div id="map_initialisation"></div>
         </div>
         <div id="partieLancee">

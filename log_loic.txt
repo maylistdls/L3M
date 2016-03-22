@@ -1,3 +1,17 @@
+22 03 2016 13h30 15h40
+Solution pour représenter les QG et les batteries sur la carte
+Changement des symboles selon les QG et les Batteries en fonction de l'équipe (QG en forme de blason, Batterie en forme de carré arrondis)
+
+
+
+21 03 2016 21h 23h 
+Traitement des données renvoyer par le serveur pour afficher les batteries et les qg 
+
+
+21 03 2016 9h 12h -> 13h30 - 17h
+Adaptation de la procedure de lancement de partie pour que seul l'administrateur de la partie détermine les parametres de la partie
+
+
 19 03 2016 19h 22h30
 Modification de la procedure de lancement de partie.
 Coté client : 

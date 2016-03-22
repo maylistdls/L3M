@@ -11,7 +11,9 @@ try {
     $rows = $stmt->fetch(PDO::FETCH_ASSOC);
 // ---- Identifiant dans le jeu (correspond à l'ordre d'arrivee) ----
     $id = $rows['d_sync'];
+
 // ---- Attente des 6 joueurs ----
+    
     while ($rows['d_sync'] < 6) {
         sleep(5);
         $stmt = $db->prepare('SELECT d_sync FROM sync');

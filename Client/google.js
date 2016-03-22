@@ -39,7 +39,8 @@ var roundDeg;
 var rayon = 70;	
 var angleParRapportAuNord = 0;
 var equipe = 1;
-
+var listeQG = new Object();
+var listeBatterie = new Object();
 
 
 // Variables globales pour l'interface
@@ -55,7 +56,11 @@ var QGBar;
 var initialisation;
 var information_initialisation;
 var map_initialisation;
-
+var etape_en_cours;
+var nombreBalise;
+var nombreTotalDeBaliseAPlacer;
+var nombreTotalDeBaliseParEquipe;
+var listeObjetQGBatterie;
 
 
 
@@ -64,7 +69,9 @@ var map_initialisation;
 // FONCTIONNALITES
 // Fonctionnalites cartographiques
 
-function pinSymbol(color) {
+ 
+
+function pinSymbolJoueur(color) {
     return {
         path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
         fillColor: color,
@@ -73,8 +80,30 @@ function pinSymbol(color) {
         strokeWeight: 2,
         scale: 1,
    };
-} 
+}
 
+function pinSymbolBatterie(color) {
+    return {
+        path: 'M24-8c0 4.4-3.6 8-8 8h-32c-4.4 0-8-3.6-8-8v-32c0-4.4 3.6-8 8-8h32c4.4 0 8 3.6 8 8v32z',
+        fillColor: color,
+        fillOpacity: 1,
+        strokeColor: '#000',
+        strokeWeight: 2,
+        scale: 0.5,
+   };
+}
+
+
+function pinSymbolQG(color) {
+    return {
+        path: 'M18.8-31.8c.3-3.4 1.3-6.6 3.2-9.5l-7-6.7c-2.2 1.8-4.8 2.8-7.6 3-2.6.2-5.1-.2-7.5-1.4-2.4 1.1-4.9 1.6-7.5 1.4-2.7-.2-5.1-1.1-7.3-2.7l-7.1 6.7c1.7 2.9 2.7 6 2.9 9.2.1 1.5-.3 3.5-1.3 6.1-.5 1.5-.9 2.7-1.2 3.8-.2 1-.4 1.9-.5 2.5 0 2.8.8 5.3 2.5 7.5 1.3 1.6 3.5 3.4 6.5 5.4 3.3 1.6 5.8 2.6 7.6 3.1.5.2 1 .4 1.5.7l1.5.6c1.2.7 2 1.4 2.4 2.1.5-.8 1.3-1.5 2.4-2.1.7-.3 1.3-.5 1.9-.8.5-.2.9-.4 1.1-.5.4-.1.9-.3 1.5-.6.6-.2 1.3-.5 2.2-.8 1.7-.6 3-1.1 3.8-1.6 2.9-2 5.1-3.8 6.4-5.3 1.7-2.2 2.6-4.8 2.5-7.6-.1-1.3-.7-3.3-1.7-6.1-.9-2.8-1.3-4.9-1.2-6.4z',
+        fillColor: color,
+        fillOpacity: 1,
+        strokeColor: '#000',
+        strokeWeight: 2,
+        scale: 1,
+   };
+}
 
 
 
@@ -147,7 +176,7 @@ function afficheLoc(data)
                 var marker = new google.maps.Marker(
                 {
                     position: latlng,
-                    icon: pinSymbol(color)
+                    icon: pinSymbolJoueur(color)
                 }); 
                 
                 //Ajout du marqueur à la liste des marqueurs (pour les supprimer)
@@ -217,11 +246,10 @@ function maPosition(position) {
     markerDelAgain();
     //Creation du marqueur
     
-    var color = "#0F0";
     var marker = new google.maps.Marker(
     {
         position: latlng,
-        icon: pinSymbol(color)
+        icon: pinSymbolJoueur("#0F0")
     }); 
     //Ajout du marqueur à la liste des marqueurs (pour les supprimer)
     listeMarker.push(marker);
@@ -677,7 +705,7 @@ function requeteAjaxPlacementQG()
 {
     // Connexion au fichier php
 	var ajax = new XMLHttpRequest(); 
-	ajax.open('POST', '../Serveur/recupIdentifiant.php', true); 
+	ajax.open('POST', 'Loic/testServeur/recupIdentifiant.php', true); 
 	ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
 	
     // Ecoute de la reponse
@@ -747,12 +775,264 @@ function requeteAjaxPlacementQG()
 
 
 
+function requeteAjaxInformationJoueur() 
+{
+    // Connexion au fichier php
+	var ajax = new XMLHttpRequest(); 
+	ajax.open('POST', 'Loic/testServeur/recupIdentifiant.php', true); 
+	ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
+	
+    // Ecoute de la reponse
+    ajax.addEventListener('readystatechange', 
+		function(e) 
+        { 
+			if(ajax.readyState == 4 && ajax.status == 200)  // Si le .php a bien renvoyé des données
+			{
+				var data = JSON.parse(ajax.responseText); // Decodage des donnees
+				id = data.identifiant;
+                equipe = data.equipe;
+                document.getElementById("equipe").innerHTML="Equipe "+equipe;
+                initialisation.style.visibility = "visible";
+
+                if (id == 1)
+                {
+                    information_initialisation.innerHTML+="Vous êtes le joueur "+id+". C'est à vous de configurer la partie."
+                    
+                    var init = 0;
+                    var equipeEnCours = 1;
+                    etape_en_cours.innerHTML+="Veuillez choisir la position du QG de l'équipe "+equipeEnCours;
+                    document.getElementById("map_initialisation").style.visibility = "visible";
+                    marker = new google.maps.Marker({
+                      map: map_initialisation,
+                      draggable: true,
+                      animation: google.maps.Animation.DROP,
+                      position: latlng
+                    });
+
+                    google.maps.event.addListener(marker, 'dragend', function()
+                    {
+                        console.log(marker.getPosition().lat(), marker.getPosition().lng());
+                    });
+
+                    var btnValider = document.createElement("BUTTON");        // Create a <button> element
+                    btnValider.setAttribute("id", "boutonValider")
+                    var text = document.createTextNode("Suivant");       // Create a text node
+                    btnValider.appendChild(text);                                // Append the text to <button>
+                    initialisation.appendChild(btnValider);                    // Append <button> to <body>
+                    btnValider.addEventListener("click", function(){
+                		if (init==0)
+                		{
+                			equipeEnCours+=1;
+                			console.log(marker.getPosition().lat(), marker.getPosition().lng());
+	                        initialisation.style.visibility = "hidden";
+	                        document.getElementById("map_initialisation").style.visibility = "hidden";
+
+	                        etape_en_cours.innerHTML="Veuillez choisir la position du QG de l'equipe "+equipeEnCours;
+	                        initialisation.style.visibility = "visible";
+	                        document.getElementById("map_initialisation").style.visibility = "visible";
+
+	                        // Save the location of the marker
+	                        QG = new Object;
+	                        QG.lat = marker.getPosition().lat();
+	                        QG.lng = marker.getPosition().lng();
+
+	                        listeQG.equipe1 = QG;
+
+	                        console.log(QG);
+	                        init+=1;
+	                        marker.setMap(null);
+                    		marker = new google.maps.Marker({
+		                      map: map_initialisation,
+		                      draggable: true,
+		                      animation: google.maps.Animation.DROP,
+		                      position: latlng
+		                    });
+
+                		}
+                		else if (init==1)
+                		{
+                			console.log(marker.getPosition().lat(), marker.getPosition().lng());
+	                        initialisation.style.visibility = "hidden";
+	                        document.getElementById("map_initialisation").style.visibility = "hidden";
+
+	                        etape_en_cours.innerHTML="Veuillez choisir le nombre de batterie par équipe ";
+	                        initialisation.style.visibility = "visible";
+
+	                        // Save the location of the marker
+	                        QG = new Object;
+	                        QG.lat = marker.getPosition().lat();
+	                        QG.lng = marker.getPosition().lng();
+
+	                        listeQG.equipe2 = QG;
+
+	                        console.log(listeQG);
+	                        init+=1;
+	                        marker.setMap(null);
+                    		
+
+		                    nombreBalise = document.createElement("INPUT");
+							nombreBalise.setAttribute("type", "number");
+							nombreBalise.value = "3";
+							nombreBalise.min = "0";
+							nombreBalise.max = "6";
+
+							initialisation.insertBefore(nombreBalise,document.getElementById("map_initialisation"));
+
+                		}
+                		else if (init==2 && nombreBalise.value != 0)
+                		{	
+                			
+	                			nombreTotalDeBaliseAPlacer = 2*parseInt(nombreBalise.value);
+	                			nombreTotalDeBaliseParEquipe = parseInt(nombreBalise.value);
+	                			nombreTotalDeBaliseParEquipePosee = 1;
+	                			equipeEnCours=1;
+	                			var baliseRestante = nombreTotalDeBaliseParEquipe-nombreTotalDeBaliseParEquipePosee;
+		                        initialisation.style.visibility = "hidden";
+		                        document.getElementById("map_initialisation").style.visibility = "hidden";
+
+		                        etape_en_cours.innerHTML="Veuillez choisir la position de la batterie "+nombreTotalDeBaliseParEquipePosee+" de l'équipe "+equipeEnCours;
+		                        initialisation.style.visibility = "visible";
+		                        document.getElementById("map_initialisation").style.visibility = "visible";
+
+		                        init+=1;
+		                        marker.setMap(null);
+	                    		marker = new google.maps.Marker({
+			                      map: map_initialisation,
+			                      draggable: true,
+			                      animation: google.maps.Animation.DROP,
+			                      position: latlng
+			                    });
+			                    initialisation.removeChild(initialisation.getElementsByTagName("input")[0]);
+			                    for (var j=1; j<=2; j++)
+			                    {
+			                    	batterie = new Object;
+				                    for (var i=1; i<=nombreTotalDeBaliseParEquipe; i++)
+				                    {
+				                    	batterie["numero"+i] = new Object;
+				                    }
+				                    listeBatterie["equipe"+j] = batterie;
+			                    }
+	                    	
+		                    
+		                    
+
+                		}
+                		else if (init==3 && nombreBalise.value!="0")
+                		{
+                			console.log(listeBatterie);
+                			listeBatterie['equipe'+equipeEnCours]['numero'+nombreTotalDeBaliseParEquipePosee].lat = marker.getPosition().lat();
+		                    listeBatterie['equipe'+equipeEnCours]['numero'+nombreTotalDeBaliseParEquipePosee].lng = marker.getPosition().lng();
+                			
+                			var baliseRestante = nombreTotalDeBaliseParEquipe-nombreTotalDeBaliseParEquipePosee;
+                			if (baliseRestante==0)
+                			{
+                				nombreTotalDeBaliseParEquipePosee = 0
+                				equipeEnCours+=1;
+                			}
+                			console.log(nombreTotalDeBaliseAPlacer);
+                			nombreTotalDeBaliseAPlacer-=1;
+                			nombreTotalDeBaliseParEquipePosee+=1;
+                			console.log("balises restantes : ", baliseRestante);
+                			
+            				initialisation.style.visibility = "hidden";
+	                        document.getElementById("map_initialisation").style.visibility = "hidden";
+
+	                        etape_en_cours.innerHTML="Veuillez choisir la position de la batterie "+nombreTotalDeBaliseParEquipePosee+" de l'équipe "+equipeEnCours;
+	                        initialisation.style.visibility = "visible";
+	                        document.getElementById("map_initialisation").style.visibility = "visible";
+
+	                        // SAVE THE LOCATION OF THE BATTERIE HERE
+		                    marker.setMap(null);
+                    		marker = new google.maps.Marker({
+		                      map: map_initialisation,
+		                      draggable: true,
+		                      animation: google.maps.Animation.DROP,
+		                      position: latlng
+		                    });
+
+		                    
+
+
+		                    
+		                    if (nombreTotalDeBaliseAPlacer==1)
+		                    {
+		                    	init+=1
+		                    }
+
+                		}
+                		else if (init == 4 || nombreBalise.value =="0")
+                		{
+                			if (nombreBalise.value != "0")
+                			{
+
+	                			listeBatterie['equipe'+equipeEnCours]['numero'+nombreTotalDeBaliseParEquipePosee].lat = marker.getPosition().lat();
+			                    listeBatterie['equipe'+equipeEnCours]['numero'+nombreTotalDeBaliseParEquipePosee].lng = marker.getPosition().lng();
+                			}
+                			else
+                			{
+                				init ==4;
+                			}
+                			console.log("toutes les balises ont été placées")
+                			console.log(listeBatterie);
+                			marker.setMap(null);
+                			//initialisation.style.visibility = "hidden";
+	                        document.getElementById("map_initialisation").style.visibility = "hidden";
+	                        etape_en_cours.innerHTML="Tous les QG ont été placés. Toutes les batteries ont été placées";
+	                        btnValider.textContent="Lancement de la partie";
+	                        init+=1;
+	                        
+                		}
+                		else if (init == 5)
+                		{
+                            initialisation.style.visibility = "hidden";
+                            requeteAjaxDebutPartie2("listeQG="+JSON.stringify(listeQG)+"&listeBatterie="+JSON.stringify(listeBatterie));
+                		}
+                        
+                        //requeteAjaxPlacementQG("equipe="+equipe+"&QGlat="+marker.getPosition().lat()+"&QGlon="+marker.getPosition().lng()) 
+
+                    });
+
+                    
+                }
+                else
+                {
+                    information_initialisation.innerHTML+="Rejoignez le joueur 1 pour déterminer les paramètres de la partie";
+
+                    var btnLancement = document.createElement("BUTTON");        // Create a <button> element
+                    var text = document.createTextNode("Lancer la partie");       // Create a text node
+                    btnLancement.appendChild(text);                                // Append the text to <button>
+                    initialisation.appendChild(btnLancement);                    // Append <button> to <body>
+                    btnLancement.addEventListener("click", function(){
+                        initialisation.style.visibility = "hidden";
+                        //requeteAjaxPlacementBatterie("equipe="+equipe+"&QGlat="+marker.getPosition().lat()+"&QGlon="+marker.getPosition().lng())
+                        requeteAjaxDebutPartie2(); 
+                    });
+                }
+                
+
+               
+
+
+				//DateDeFinEnMilliSeconde = debutPartie*1000;
+				//compte_a_rebours_DEBUT_PARTIE();
+    
+			} 
+		}
+	); 
+    
+    // Envoi de la requete
+	ajax.send();
+};
+
+
+
+
 // Requete Ajax pour la mise à jour de la localisation
 function requeteAjaxPlacementBatterie(requete) 
 {
     // Connexion au fichier php
     var ajax = new XMLHttpRequest(); 
-    ajax.open('POST', '../Serveur/QGplaces.php', true); 
+    ajax.open('POST', 'Loic/testServeur/QGplaces.php', true); 
     ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
     
     // Ecoute de la reponse
@@ -813,7 +1093,7 @@ function requeteAjaxDebutPartie(requete)
 {
     // Connexion au fichier php
     var ajax = new XMLHttpRequest(); 
-    ajax.open('POST', '../Serveur/startGame.php', true); 
+    ajax.open('POST', 'Loic/testServeur/startGame.php', true); 
     ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
     
     // Ecoute de la reponse
@@ -827,7 +1107,134 @@ function requeteAjaxDebutPartie(requete)
                 var data = JSON.parse(ajax.responseText); // Decodage des donnees
                 console.log(data)
                 var debutPartie = data[1];
+                listeObjetQGBatterie = data[0];
+                var regExp = /\(([^)]+)\)/g;
+                var color = "#FF0";
+                console.log(listeObjetQGBatterie)
+                for (index_listeObjetQGBatterie = 0; index_listeObjetQGBatterie < listeObjetQGBatterie.length; index_listeObjetQGBatterie++) {
+                    var point = equipe[index_listeObjetQGBatterie];
+                    var coordonnees = point.loc;
+                    
+                    var matches = coordonnees.match(regExp);
+                    coordonnees = coordonnees.substring(1, coordonnees.length - 1);
+                    coordonnees = coordonnees.split(",");
+                    var x = parseFloat(coordonnees[0]);
+                    var y = parseFloat(coordonnees[1]);
+                    console.log(x,y);
+                    if (point.id != id)
+                    {
+                        latlng = new google.maps.LatLng(x, y);
+                        var marker = new google.maps.Marker(
+                        {
+                            position: latlng,
+                            icon: pinSymbolJoueur(color)
+                        }); 
+                        
+                        //Ajout du marqueur à la liste des marqueurs (pour les supprimer)
+                        listeMarker.push(marker);
+                        //Ajout du marqueur à la carte
+                        marker.setMap(map);
+                    }
+                }
+
+
+
+
+                DateDeFinEnMilliSeconde = debutPartie*1000;
+                compte_a_rebours_DEBUT_PARTIE();
+    
+            } 
+        }
+    ); 
+    
+    // Envoi de la requete
+    ajax.send(requete);
+};
+
+function requeteAjaxDebutPartie2(requete) 
+{
+    // Connexion au fichier php
+    var ajax = new XMLHttpRequest(); 
+    ajax.open('POST', 'Loic/testServeur/startGame2.php', true); 
+    ajax.setRequestHeader('Content-type', 'application/x-www-form-urlencoded'); 
+    
+    // Ecoute de la reponse
+    ajax.addEventListener('readystatechange', 
+        function(e) 
+        { 
+            if(ajax.readyState == 4 && ajax.status == 200)  // Si le .php a bien renvoyé des données
+            {
+                document.body.removeChild(initialisation);
+                var data = JSON.parse(ajax.responseText); // Decodage des donnees
+                console.log(data)
+                var debutPartie = data[1];
                 console.log(debutPartie);
+                listeObjetQGBatterie = data[0];
+                console.log(listeObjetQGBatterie);
+
+                // IL FAUT RECUPERER POUR CHAQUE OBJET DE CE TABLEAU listeObjetQGBatterie LES COORDONNEES lat lng pour afficher les marqueurs correspondant au QG 
+                var regExp = /\(([^)]+)\)/g;
+                var color = "#FF0";
+                console.log(listeObjetQGBatterie)
+                for (index_listeObjetQGBatterie = 0; index_listeObjetQGBatterie < listeObjetQGBatterie.length; index_listeObjetQGBatterie++) {
+
+                    var point = listeObjetQGBatterie[index_listeObjetQGBatterie];
+                    var coordonnees = point.loc;
+                    
+                    var matches = coordonnees.match(regExp);
+                    coordonnees = coordonnees.substring(1, coordonnees.length - 1);
+                    coordonnees = coordonnees.split(",");
+                    var x = parseFloat(coordonnees[0]);
+                    var y = parseFloat(coordonnees[1]);
+                    console.log(x,y);
+                    console.log(point.capa);
+
+
+                    if (point.equipe == "1" )
+                    {
+                        
+                        var color = "#F00";
+                    }
+                    else 
+                    {
+                        
+                        var color = "#FF0";
+                    }
+
+
+                    latlng = new google.maps.LatLng(x, y);
+                    
+                    if (point.qg_bat)
+                    {
+                    	var marker = new google.maps.Marker(
+                        {
+                            position: latlng,
+                            icon: pinSymbolQG(color),
+                           
+                        }); 
+                    }
+                    else
+                    {
+                    	var marker = new google.maps.Marker(
+                        {
+                            position: latlng,
+                            icon: pinSymbolBatterie(color),
+                            
+                        }); 
+                    }
+                    
+                    
+                    
+                    
+
+                	var infowindow = new google.maps.InfoWindow();
+        			makeInfoWindowEvent(map, infowindow, "<b>Capacite :</b> " + point.capa, marker);    
+          
+
+
+                    marker.setMap(map);
+                    
+                }
                 DateDeFinEnMilliSeconde = debutPartie*1000;
                 compte_a_rebours_DEBUT_PARTIE();
     
@@ -840,15 +1247,20 @@ function requeteAjaxDebutPartie(requete)
 };
 
 
-
-
   
 
        
 
 
 
-
+//Fonction pour ajouter une popup pour plusieurs markers
+function makeInfoWindowEvent(map, infowindow, contentString, marker) {
+    google.maps.event.addListener(marker, 'click', function() 
+        {
+            infowindow.setContent(contentString);
+            infowindow.open(map, marker);
+        },false);
+}
 
 
 
@@ -927,7 +1339,7 @@ window.addEventListener('load',function (e){
     value: 0,
     startAngle: 90,
     tooltipFormat: tooltipVal2
-});
+	});
 
     
     document.getElementById("rotationSlider").style.visibility = "hidden";
@@ -946,7 +1358,8 @@ window.addEventListener('load',function (e){
 
 
     initialisation = document.getElementById("initialisation");
-    information_initialisation = document.getElementById("information_initialisation");
+    information_initialisation = document.getElementById("information_initialisation");    
+    etape_en_cours = document.getElementById("etape_en_cours");
     
 
     initialisation.style.visibility = "hidden";
@@ -967,6 +1380,6 @@ window.addEventListener('load',function (e){
     },errorCallback,{enableHighAccuracy : true, timeout:100000, maximumAge:100000});
     
     
-	requeteAjaxPlacementQG();
+	requeteAjaxInformationJoueur();
     
     } ,false);

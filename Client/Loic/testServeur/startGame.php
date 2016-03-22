@@ -1,6 +1,6 @@
 <?php
 try {
-    require 'connexion.php';
+    require '../../../Serveur/connexion.php';
     /*
     if (isset($_POST["joueur"]) && isset($_POST["Batterielon"]) && isset($_POST["Batterielat"]))
     {
@@ -18,7 +18,7 @@ try {
     $stmt->execute();
     $rows = $stmt->fetch(PDO::FETCH_ASSOC);
 // ---- Attente des 6 joueurs ----
-    while (0){//$rows['s_sync']<6) {
+    while ($rows['s_sync']<6) {
       sleep(5);
       $stmt = $db->prepare('SELECT s_sync FROM sync');
       $stmt->execute();
