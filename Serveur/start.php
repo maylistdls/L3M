@@ -4,7 +4,8 @@ try {
     require 'connexion.php';
 // ---- Recuperation des positions des qg et batteries uniquement en provenance du chef de partie ----
     if($_POST['id']==1){
-      $ensembleqg=json_decode???
+      $tab = file_get_contents('php://input');
+      $ensembleqg=json_decode($tab, true);
 // ---- Ajout des qg dans la base de donnees ----
       foreach($ensembleqg as $qg){
         $stmt = $db->prepare('INSERT INTO qg (capa,equipe,qg_bat,loc) VALUES (1000,:equipe,:qg_bat,POINT(:x,:y))');
@@ -46,6 +47,7 @@ try {
 // ---- Mise en forme et envoi des donnees ----
     $start=Array($envoi,$tps);
     echo json_encode($start);
+
   } catch (Exception $e) {
       echo "<h1 align='center'>Error about the start!</h1>";
       echo $e;

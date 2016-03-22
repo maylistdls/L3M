@@ -2,6 +2,8 @@
 
 try {
     require 'connexion.php';
+    $_POST['etat']='assaut';
+    $_POST['id']=2;
 // ---- Initialisation ----
     $tour = $db->prepare('UPDATE perso SET regen=0, protec=1, recup=0, tir=0, assaut=0, etat=0 WHERE id=:id');
     $tour->bindParam(':id', $_POST['id']);
@@ -16,9 +18,9 @@ try {
 // ---- ASSAUT ----
     elseif ($_POST['etat'] == 'assaut') {
         $stmt = $db->prepare('SELECT id FROM perso WHERE equipe!=(SELECT equipe FROM perso WHERE id=:id) AND
-        (loc<->(SELECT loc FROM perso WHERE id=:id))<=18 ORDER BY loc<->(SELECT loc FROM perso WHERE id=:id) LIMIT 1');
-        $stmt->bindParam(':id', $_POST['id']);
+        (loc<->(SELECT loc FROM perso WHERE id=:id))<=18 ORDER BY loc<->(SELECT loc FROM perso WHERE id=:id) LIMIT 1');        $stmt->bindParam(':id', $_POST['id']);
         $stmt->execute();
+}
         $rows = $stmt->fetchAll();
         foreach ($rows as $row) {
             if ($row['id'] != '') {
@@ -163,7 +165,7 @@ try {
     echo json_encode($envoi);
     sleep(3);
     $tour2 = $db->prepare('UPDATE sync SET c_sync=FALSE');
-    $tour2->execute();
+    $tour2->execute();*/
 } catch (Exception $e) {
     echo "<h1 align='center'>Error about the action!</h1>";
     echo $e;
