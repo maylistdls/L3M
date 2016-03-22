@@ -121,6 +121,7 @@ try {
     $stmt->execute();
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $rows = $stmt->fetchAll();
+    $compte = 0;
     foreach ($rows as $row) {
         if ($row['etat'] != 0) {
             $compte = $compte + 1;
@@ -138,7 +139,8 @@ try {
             $stmt->execute();
         }
         $stmt = $db->prepare('UPDATE sync SET c_sync=TRUE, t_sync=:temps');
-        $stmt->bindParam(':temps', time());
+        $time = time();
+        $stmt->bindParam(':temps',$time);
         $stmt->execute();
     }
 // ---- Attente ----

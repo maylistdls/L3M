@@ -256,7 +256,7 @@ function maPosition(position) {
     listeMarker.push(marker);
     //Ajout du marqueur à la carte
     marker.setMap(map);
-    requeteAjaxLocalisation("id="+id+"&loc=("+position.coords.latitude+","+position.coords.longitude+")");
+    requeteAjaxLocalisation("id="+id+"&loc=("+position.coords.latitude+","+position.coords.longitude+")&partie="+partie+"&equipe="+equipe);
     
     
     

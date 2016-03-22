@@ -1,25 +1,31 @@
 <?php
 try {
     require ("connexion.php");
+    $partie = $_POST["partie"];
+    $equipe = $_POST["equipe"];
 
-    $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
+    $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id AND n_partie=:partie");
 		$stmt->bindParam(':loc',$_POST['loc']);
 		$stmt->bindParam(':id',$_POST['id']);
+		$stmt->bindParam(':partie',$partie);
     $stmt->execute();
 
-    $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id");
+    $stmt = $db->prepare("UPDATE perso SET loc=:loc WHERE id=:id AND n_partie=:partie");
 		$stmt->bindParam(':loc',$_POST['loc']);
 		$stmt->bindParam(':id',$_POST['id']);
+		$stmt->bindParam(':partie',$partie);
     $stmt->execute();
 
-		$select = $db->prepare("SELECT loc,id FROM perso WHERE equipe=(SELECT equipe FROM perso WHERE id=:id)");
-		$select->bindParam(':id',$_POST['id']);
+		$select = $db->prepare("SELECT loc,id FROM perso WHERE equipe=:equipe AND n_partie = :partie");
+		$select->bindParam(':equipe',$equipe);
+		$select->bindParam(':partie',$partie);
 		$select->execute();
 		$select->setFetchMode(PDO::FETCH_ASSOC);
 		$ami = $select->fetchAll();
 
-		$slct = $db->prepare("SELECT loc,id FROM perso WHERE equipe!=(SELECT equipe FROM perso WHERE id=:id)");
-		$slct->bindParam(':id',$_POST['id']);
+		$slct = $db->prepare("SELECT loc,id FROM perso WHERE equipe!=:equipe AND n_partie = :partie");
+		$slct->bindParam(':equipe',$equipe);
+		$slct->bindParam(':partie',$partie);
 		$slct->execute();
 		$slct->setFetchMode(PDO::FETCH_ASSOC);
 		$enemy = $slct->fetchAll();
