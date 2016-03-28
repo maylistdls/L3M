@@ -9,13 +9,13 @@ try {
             // Decode les listes des qg et batterie de maniere associative
             $QG = json_decode($_POST["listeQG"],true);
             $BATTERIE = json_decode($_POST["listeBatterie"],true);
-            
+
             // Parcous des qg pour les ajouter à la base de données
             foreach ($QG as $name => $value) {
                 $numEquipe = explode("equipe", $name)[1];
                 $lat = $value["lat"];
                 $lng = $value["lng"];
-                
+
                 $stmt = $db->prepare('INSERT INTO qg (capa,equipe,qg_bat,loc,n_partie) VALUES (1000,:equipe,true,POINT(:x,:y),:partie)');
                 $stmt->bindParam(':equipe', $numEquipe);
                 $stmt->bindParam(':x', $lat);
@@ -31,7 +31,7 @@ try {
                 {
                 $lat = $value["lat"];
                 $lng = $value["lng"];
-                
+
                 $stmt = $db->prepare('INSERT INTO qg (capa,equipe,qg_bat,loc,n_partie) VALUES (1000,:equipe,false,POINT(:x,:y),:partie)');
                 $stmt->bindParam(':equipe', $numEquipe);
                 $stmt->bindParam(':x', $lat);
@@ -41,11 +41,6 @@ try {
                 }
             }
         }
-
-
-
-
-
 
 // ---- Compteur de joueurs et mise en place du temps pour la synchronisation du jeu ----
     $tmp = time();

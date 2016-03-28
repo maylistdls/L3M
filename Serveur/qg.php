@@ -13,16 +13,12 @@ try {
 // ---- Identifiant dans le jeu (correspond à l'ordre d'arrivee) ----
     $id = $rows['d_sync'];
     $id = 1;
-
-
 // ---- Initialise le numero de partie ----
     if ($id==1){
       $stmt = $dbmysql->prepare('UPDATE partie SET numeroPartie=numeroPartie+1');
       $stmt->execute();
     }
-
 // ---- Attente des 6 joueurs ----
-    
     while ($rows['d_sync'] < 6) {
         sleep(5);
         $stmt = $db->prepare('SELECT d_sync FROM sync');

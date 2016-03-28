@@ -191,7 +191,7 @@ try {
     echo json_encode($envoi);
     sleep(3);
     $tour2 = $db->prepare('UPDATE sync SET c_sync=FALSE');
-    $tour2->execute();*/
+    $tour2->execute();
 } catch (Exception $e) {
     echo "<h1 align='center'>Error about the action!</h1>";
     echo $e;
