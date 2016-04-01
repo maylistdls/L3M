@@ -2,8 +2,6 @@
 
 try {
     require 'connexion.php';
-    $_POST['etat']='assaut';
-    $_POST['id']=2;
 // ---- Initialisation ----
     $tour = $db->prepare('UPDATE perso SET regen=0, protec=1, recup=0, tir=0, assaut=0, etat=0 WHERE id=:id AND n_partie=:partie');
     $tour->bindParam(':id', $_POST['id']);
@@ -25,7 +23,6 @@ try {
         $stmt->bindParam(':equipe', $_POST['equipe']);
         $stmt->bindParam(':partie', $_POST['partie']);
         $stmt->execute();
-}
         $rows = $stmt->fetchAll();
         foreach ($rows as $row) {
             if ($row['id'] != '') {
@@ -61,16 +58,19 @@ try {
     }
 // ---- TIR ----
     elseif ($_POST['etat'] == 'tir') {
+      $capInf=($_POST['cap']-45)%(360);
+      $capSup=($_POST['cap']+45)%(360);
         $stmt = $db->prepare('SELECT id FROM perso WHERE
           (loc<->(SELECT loc FROM perso WHERE id=:id))<=100 AND
           (loc<->(SELECT loc FROM perso WHERE id=:id))>0 AND
           equipe!=(SELECT equipe FROM perso WHERE id=:id) AND
-          degrees(acos((loc<->(SELECT loc FROM perso WHERE id=:id))/100))>=(:cap-45)%(360) AND
-          degrees(acos((loc<->(SELECT loc FROM perso WHERE id=:id))/100))<=(:cap+45)%(360) AND
+          degrees(acos((loc<->(SELECT loc FROM perso WHERE id=:id))/100))>=:capInf AND
+          degrees(acos((loc<->(SELECT loc FROM perso WHERE id=:id))/100))<=:capSup AND
            n_partie=:partie');
         $stmt->bindParam(':id', $_POST['id']);
         $stmt->bindParam(':partie', $_POST['partie']);
-        $stmt->bindParam(':cap', $_POST['cap']);
+        $stmt->bindParam(':capInf', $capInf);
+        $stmt->bindParam(':capSup', $capSup);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $rows = $stmt->fetchAll();
@@ -87,12 +87,13 @@ try {
           (loc<->(SELECT loc FROM perso WHERE id=:id))<=100 AND
           (loc<->(SELECT loc FROM perso WHERE id=:id))>0 AND
           equipe!=(SELECT equipe FROM perso WHERE id=:id) AND
-          degrees(acos((loc<->(SELECT loc FROM perso WHERE id=:id))/100))>=(:cap-45)%(360) AND
-          degrees(acos((loc<->(SELECT loc FROM perso WHERE id=:id))/100))<=(:cap+45)%(360) AND
+          degrees(acos((loc<->(SELECT loc FROM perso WHERE id=:id))/100))>=:capInf AND
+          degrees(acos((loc<->(SELECT loc FROM perso WHERE id=:id))/100))<=:capSup AND
            n_partie=:partie');
         $stmt->bindParam(':partie', $_POST['partie']);
         $stmt->bindParam(':id', $_POST['id']);
-        $stmt->bindParam(':cap', $_POST['cap']);
+        $stmt->bindParam(':capInf', $capInf);
+        $stmt->bindParam(':capSup', $capSup);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $rows = $stmt->fetchAll();
