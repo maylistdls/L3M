@@ -3,6 +3,7 @@
 //Variables globales pour la carte
 var map;
 var listeMarker = []; //Pour pouvoir supprimer les marqueurs
+var lstMarkerQG = [];
 var bounds = new google.maps.LatLngBounds();
 var outerbounds = [ // covers the (mercator projection) world
         new google.maps.LatLng(85,180),
@@ -25,7 +26,7 @@ var superposition = 0;
 
 
 //Variables globales pour le jeu 
-var capaMax = 10000;
+var capaMax = 200;
 var capa = capaMax;
 var dureeTourDeJeu = 30000; //120000 = 2 minutes
 var dureePartie = 60000; //120000 = 2 minutes
@@ -275,6 +276,16 @@ function markerDelAgain()
     {
         listeMarker[i].setMap(null);
 	}  
+}
+
+//Fonction de suppression de marqueurs
+function markerDelAgainQG() 
+{
+    for(i=0;i<lstMarkerQG.length;i++) 
+    {
+        lstMarkerQG[i].setMap(null);
+    }  
+    lstMarkerQG=[];
 }
 
 
@@ -630,7 +641,7 @@ function functionAction(cible)
 
 preparationRequete = function()
 {
-    return "id="+id+"&etat='"+etat+"'&directionTir='"+angleParRapportAuNord+"'&rayonObs='"+rayon+"'&directionProtec='"+angleParRapportAuNord+"'";
+    return "id="+id+"&etat="+etat+"&cap='"+angleParRapportAuNord+"'&rayonObs='"+rayon+"'&directionProtec='"+angleParRapportAuNord+"'&equipe="+equipe+"&partie="+partie;
 }
 
 
@@ -655,8 +666,11 @@ function requeteAjaxAction(requete)
                 DateDeFinEnMilliSeconde = dateProchainEnvoi; 
                 var data = JSON.parse(ajax.responseText); // Decodage des donnees	           
                 console.log(data); // Execution de l'affichage
-                rayon = data.obs;
-                capa = data.capa;
+                listeObjetQGBatterie = data[0];
+                afficherQG(listeObjetQGBatterie);
+
+                rayon = parseInt(data[1].obs);
+                capa = parseInt(data[1].capa);
                 progressBar.value = capa;
                 
 			} 
@@ -874,7 +888,7 @@ function requeteAjaxInformationJoueur()
 
 		                    nombreBalise = document.createElement("INPUT");
 							nombreBalise.setAttribute("type", "number");
-							nombreBalise.value = "3";
+							nombreBalise.value = "1";
 							nombreBalise.min = "0";
 							nombreBalise.max = "6";
 
@@ -1172,71 +1186,9 @@ function requeteAjaxDebutPartie2(requete)
                 var debutPartie = data[1];
                 console.log(debutPartie);
                 listeObjetQGBatterie = data[0];
-                console.log(listeObjetQGBatterie);
+                afficherQG(listeObjetQGBatterie);
 
-                // IL FAUT RECUPERER POUR CHAQUE OBJET DE CE TABLEAU listeObjetQGBatterie LES COORDONNEES lat lng pour afficher les marqueurs correspondant au QG 
-                var regExp = /\(([^)]+)\)/g;
-                var color = "#FF0";
-                console.log(listeObjetQGBatterie)
-                for (index_listeObjetQGBatterie = 0; index_listeObjetQGBatterie < listeObjetQGBatterie.length; index_listeObjetQGBatterie++) {
-
-                    var point = listeObjetQGBatterie[index_listeObjetQGBatterie];
-                    var coordonnees = point.loc;
-                    
-                    var matches = coordonnees.match(regExp);
-                    coordonnees = coordonnees.substring(1, coordonnees.length - 1);
-                    coordonnees = coordonnees.split(",");
-                    var x = parseFloat(coordonnees[0]);
-                    var y = parseFloat(coordonnees[1]);
-                    console.log(x,y);
-                    console.log(point.capa);
-
-
-                    if (point.equipe == "1" )
-                    {
-                        
-                        var color = "#F00";
-                    }
-                    else 
-                    {
-                        
-                        var color = "#FF0";
-                    }
-
-
-                    latlng = new google.maps.LatLng(x, y);
-                    
-                    if (point.qg_bat)
-                    {
-                    	var marker = new google.maps.Marker(
-                        {
-                            position: latlng,
-                            icon: pinSymbolQG(color),
-                           
-                        }); 
-                    }
-                    else
-                    {
-                    	var marker = new google.maps.Marker(
-                        {
-                            position: latlng,
-                            icon: pinSymbolBatterie(color),
-                            
-                        }); 
-                    }
-                    
-                    
-                    
-                    
-
-                	var infowindow = new google.maps.InfoWindow();
-        			makeInfoWindowEvent(map, infowindow, "<b>Capacite :</b> " + point.capa, marker);    
-          
-
-
-                    marker.setMap(map);
-                    
-                }
+                
                 DateDeFinEnMilliSeconde = debutPartie*1000;
                 compte_a_rebours_DEBUT_PARTIE();
     
@@ -1267,7 +1219,71 @@ function makeInfoWindowEvent(map, infowindow, contentString, marker) {
 
 
 
-  
+function afficherQG(listeObjetQGBatterie)
+{
+    markerDelAgainQG();
+    // IL FAUT RECUPERER POUR CHAQUE OBJET DE CE TABLEAU listeObjetQGBatterie LES COORDONNEES lat lng pour afficher les marqueurs correspondant au QG 
+    var regExp = /\(([^)]+)\)/g;
+    var color = "#FF0";
+    console.log(listeObjetQGBatterie)
+    for (index_listeObjetQGBatterie = 0; index_listeObjetQGBatterie < listeObjetQGBatterie.length; index_listeObjetQGBatterie++) {
+
+        var point = listeObjetQGBatterie[index_listeObjetQGBatterie];
+        var coordonnees = point.loc;
+        
+        var matches = coordonnees.match(regExp);
+        coordonnees = coordonnees.substring(1, coordonnees.length - 1);
+        coordonnees = coordonnees.split(",");
+        var x = parseFloat(coordonnees[0]);
+        var y = parseFloat(coordonnees[1]);
+        
+
+        if (point.equipe == "1" )
+        {
+            
+            var color = "#F00";
+        }
+        else 
+        {
+            
+            var color = "#FF0";
+        }
+
+
+        latlng = new google.maps.LatLng(x, y);
+        
+        if (point.qg_bat)
+        {
+            var marker = new google.maps.Marker(
+            {
+                position: latlng,
+                icon: pinSymbolQG(color),
+               
+            }); 
+        }
+        else
+        {
+            var marker = new google.maps.Marker(
+            {
+                position: latlng,
+                icon: pinSymbolBatterie(color),
+                
+            }); 
+        }
+        
+        
+        lstMarkerQG.push(marker);
+        
+
+        var infowindow = new google.maps.InfoWindow();
+        makeInfoWindowEvent(map, infowindow, "<b>Capacite :</b> " + point.capa, marker);    
+
+
+
+        marker.setMap(map);
+    
+    }
+}
     
    
     

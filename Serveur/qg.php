@@ -52,9 +52,10 @@ try {
     $stmt->bindParam(':chef', $chef);
     $stmt->execute();
 // ---- Initialise la partie (jeu) ----
-    $stmt = $db->prepare('INSERT INTO perso(id, n_partie) VALUES (:id, :partie)');
+    $stmt = $db->prepare('INSERT INTO perso(capa, id, n_partie,equipe) VALUES (100, :id, :partie, :equipe)');
     $stmt->bindParam(':id', $id);
     $stmt->bindParam(':partie', $idpartie);
+    $stmt->bindParam(':equipe', $equipe);
     $stmt->execute();
 // ---- Envoi de l'identifiant et du numero de partie ---
     $debut = Array();

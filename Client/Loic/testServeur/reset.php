@@ -11,19 +11,26 @@ try {
     $stmt->execute();
     $stmt = $db->prepare('DELETE FROM qg');
     $stmt->execute();
-    $stmt = $db->prepare('INSERT INTO perso(id,loc,capa,etat, equipe, regen, obs,protec,recup,tir,assaut,n_partie) VALUES (2,POINT(48.3,2.58),100,"obs",2,25,50,1,0,0,0,2)');
+    $obs = 'obs';
+    $stmt = $db->prepare('INSERT INTO perso(id,loc,capa,etat, equipe, regen, obs,protec,recup,tir,assaut,n_partie) VALUES (2,POINT(48.3,2.58),100,:obs,2,25,50,1,0,0,0,2)');
+
+    $stmt->bindParam(':obs',$obs);
     $stmt->execute();
-    $stmt = $db->prepare('INSERT INTO perso(id,loc,capa,etat, equipe, regen, obs,protec,recup,tir,assaut,n_partie) VALUES (3,POINT(48.3,2.59),100,"obs",1,25,50,1,0,0,0,2)');
+    $stmt = $db->prepare('INSERT INTO perso(id,loc,capa,etat, equipe, regen, obs,protec,recup,tir,assaut,n_partie) VALUES (3,POINT(48.3,2.59),100,:obs,1,25,50,1,0,0,0,2)');
+    $stmt->bindParam(':obs',$obs);
     $stmt->execute();
-    $stmt = $db->prepare('INSERT INTO perso(id,loc,capa,etat, equipe, regen, obs,protec,recup,tir,assaut,n_partie) VALUES (4,POINT(48.35,2.58),100,"obs",2,25,50,1,0,0,0,2)');
+    $stmt = $db->prepare('INSERT INTO perso(id,loc,capa,etat, equipe, regen, obs,protec,recup,tir,assaut,n_partie) VALUES (4,POINT(48.35,2.58),100,:obs,2,25,50,1,0,0,0,2)');
+    $stmt->bindParam(':obs',$obs);
     $stmt->execute();
-    $stmt = $db->prepare('INSERT INTO perso(id,loc,capa,etat, equipe, regen, obs,protec,recup,tir,assaut,n_partie) VALUES (5,POINT(48.32,2.57),100,"obs",1,25,50,1,0,0,0,2)');
+    $stmt = $db->prepare('INSERT INTO perso(id,loc,capa,etat, equipe, regen, obs,protec,recup,tir,assaut,n_partie) VALUES (5,POINT(48.32,2.57),100,:obs,1,25,50,1,0,0,0,2)');
+    $stmt->bindParam(':obs',$obs);
     $stmt->execute();
-    $stmt = $db->prepare('INSERT INTO perso(id,loc,capa,etat, equipe, regen, obs,protec,recup,tir,assaut,n_partie) VALUES (6,POINT(48.32,2.59),100,"obs",2,25,50,1,0,0,0,2)');
+    $stmt = $db->prepare('INSERT INTO perso(id,loc,capa,etat, equipe, regen, obs,protec,recup,tir,assaut,n_partie) VALUES (6,POINT(48.32,2.59),100,:obs,2,25,50,1,0,0,0,2)');
+    $stmt->bindParam(':obs',$obs);
     $stmt->execute();
     $stmt = $dbmysql->prepare('DELETE FROM joueur_partie');
     $stmt->execute();
-    $stmt = $dbmysql->prepare('UPDATE partie SET numeroPartie=2');
+    $stmt = $dbmysql->prepare('UPDATE partie SET numeroPartie=1');
     $stmt->execute();
 
 } catch (Exception $e) {
