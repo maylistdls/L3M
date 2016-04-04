@@ -59,8 +59,8 @@ try {
     }
 // ---- TIR ----
     elseif ($_POST['etat'] === 'tir') {
-      $capInf=($_POST['cap']-45)%(360);
-      $capSup=($_POST['cap']+45)%(360);
+      $capInf=((int)$_POST['cap']-45)%360;
+      $capSup=((int)$_POST['cap']+45)%360;
         $stmt = $db->prepare('SELECT id FROM perso WHERE
           (loc<->(SELECT loc FROM perso WHERE id=:id))<=100 AND
           (loc<->(SELECT loc FROM perso WHERE id=:id))>0 AND
@@ -100,8 +100,7 @@ try {
         $rows = $stmt->fetchAll();
         foreach ($rows as $row) {
             if ($row['id'] !== '') {
-                //$up = $db->prepare('UPDATE qg SET capa=capa-round(100000/(loc<->(SELECT loc FROM perso WHERE id=:id AND n_partie=:partie))) WHERE id=:ad AND n_partie=:partie');
-                $up = $db->prepare('UPDATE qg SET capa=capa-25 WHERE id=:ad AND n_partie=:partie');
+                $up = $db->prepare('UPDATE qg SET capa=capa-round(100000/(loc<->(SELECT loc FROM perso WHERE id=:id AND n_partie=:partie))) WHERE id=:ad AND n_partie=:partie');
                 $up->bindParam(':id', $_POST['id']);
                 $up->bindParam(':partie', $_POST['partie']);
                 $up->bindParam(':ad', $row['id'], PDO::PARAM_INT);
