@@ -18,8 +18,8 @@ try {
 
                 $stmt = $db->prepare('INSERT INTO qg (capa,equipe,qg_bat,loc,n_partie) VALUES (1000,:equipe,true,POINT(:x,:y),:partie)');
                 $stmt->bindParam(':equipe', $numEquipe);
-                $stmt->bindParam(':x', $lat);
-                $stmt->bindParam(':y', $lng);
+                $stmt->bindParam(':x', $lng);
+                $stmt->bindParam(':y', $lat);
                 $stmt->bindParam(':partie', $partie);
                 $stmt->execute();
 
@@ -34,8 +34,8 @@ try {
 
                 $stmt = $db->prepare('INSERT INTO qg (capa,equipe,qg_bat,loc,n_partie) VALUES (1000,:equipe,false,POINT(:x,:y),:partie)');
                 $stmt->bindParam(':equipe', $numEquipe);
-                $stmt->bindParam(':x', $lat);
-                $stmt->bindParam(':y', $lng);
+                $stmt->bindParam(':x', $lng);
+                $stmt->bindParam(':y', $lat);
                 $stmt->bindParam(':partie', $partie);
                 $stmt->execute();
                 }
