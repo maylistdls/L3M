@@ -40,22 +40,6 @@ try {
                 $stmt2->execute();
             }
         }
-        $stmt = $db->prepare('SELECT id FROM qg WHERE equipe!=:equipe AND n_partie=:partie AND
-        (loc<->(SELECT loc FROM perso WHERE id=:id))<=18 ORDER BY loc<->(SELECT loc FROM perso WHERE id=:id) LIMIT 1');
-        $stmt->bindParam(':id', $_POST['id']);
-        $stmt->bindParam(':equipe', $_POST['equipe']);
-        $stmt->bindParam(':partie', $_POST['partie']);
-        $stmt->execute();
-        $rows = $stmt->fetchAll();
-        foreach ($rows as $row) {
-            if ($row['id'] !== '') {
-                $ote = $db->prepare('UPDATE qg SET capa=capa-(SELECT capa FROM perso WHERE id=:id)/4 WHERE id=:ad AND n_partie=:partie');
-                $ote->bindParam(':id', $_POST['id']);
-                $ote->bindParam(':partie', $_POST['partie']);
-                $ote->bindParam(':ad', $row['id'], PDO::PARAM_INT);
-                $ote->execute();
-            }
-        }
     }
 // ---- TIR ----
     elseif ($_POST['etat'] === 'tir') {
@@ -73,12 +57,11 @@ try {
         $stmt->bindParam(':capInf', $capInf);
         $stmt->bindParam(':capSup', $capSup);
         $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $rows = $stmt->fetchAll();
         foreach ($rows as $row) {
             if ($row['id'] !== '') {
-                $up = $db->prepare('UPDATE perso SET tir=round(100000/(loc<->(SELECT loc FROM perso WHERE id=:id))) WHERE id=:ad AND n_partie=:partie');
-                $up->bindParam(':id', $_POST['id']);
+                $up = $db->prepare('UPDATE perso SET tir=30/*round(100000/(loc<->(SELECT loc FROM perso WHERE id=:id)))*/ WHERE id=:ad AND n_partie=:partie');
+                //$up->bindParam(':id', $_POST['id']);
                 $up->bindParam(':partie', $_POST['partie']);
                 $up->bindParam(':ad', $row['id'], PDO::PARAM_INT);
                 $up->execute();
@@ -96,12 +79,13 @@ try {
         $stmt->bindParam(':capInf', $capInf);
         $stmt->bindParam(':capSup', $capSup);
         $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $rows = $stmt->fetchAll();
+        print_r($rows);
         foreach ($rows as $row) {
+          print_r($row);
             if ($row['id'] !== '') {
-                $up = $db->prepare('UPDATE qg SET capa=capa-round(100000/(loc<->(SELECT loc FROM perso WHERE id=:id AND n_partie=:partie))) WHERE id=:ad AND n_partie=:partie');
-                $up->bindParam(':id', $_POST['id']);
+                $up = $db->prepare('UPDATE qg SET capa=capa-30/*round(100000/(loc<->(SELECT loc FROM perso WHERE id=:id AND n_partie=:partie)))*/ WHERE id=:ad AND n_partie=:partie');
+                //$up->bindParam(':id', $_POST['id']);
                 $up->bindParam(':partie', $_POST['partie']);
                 $up->bindParam(':ad', $row['id'], PDO::PARAM_INT);
                 $up->execute();
@@ -127,13 +111,6 @@ try {
         $stmt2 = $db->prepare('UPDATE perso SET recup=capa*3,assaut=assaut*10,tir=tir*10,obs=50, etat=:etat WHERE id=:id AND n_partie=:partie');
         $stmt2->bindParam(':id', $_POST['id']);
         $stmt2->bindParam(':etat', $_POST['etat']);
-        $stmt2->bindParam(':partie', $_POST['partie']);
-        $stmt2->execute();
-    }
-// ---- Non-Jeu ----
-    else {
-        $stmt2 = $db->prepare('UPDATE perso SET regen=capa*0.25, etat=1,obs=50 WHERE id=:id AND n_partie=:partie');
-        $stmt2->bindParam(':id', $_POST['id']);
         $stmt2->bindParam(':partie', $_POST['partie']);
         $stmt2->execute();
     }
