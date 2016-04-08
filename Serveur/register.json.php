@@ -43,6 +43,6 @@ $_SESSION['login']=$login ;
 
 checkDieErrorJson();
 // include('../include/parties.inc.php');
-header("Location: ../Client/map_google.php");
+header("Location: ../Client/map_google.html");
 die();
 ?>

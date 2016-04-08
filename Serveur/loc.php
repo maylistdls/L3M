@@ -10,14 +10,14 @@ try {
 		$stmt->bindParam(':partie',$partie);
     $stmt->execute();
 
-		$select = $db->prepare("SELECT loc,id FROM perso WHERE equipe=:equipe AND n_partie = :partie");
+		$select = $db->prepare("SELECT loc,id,capa FROM perso WHERE equipe=:equipe AND n_partie = :partie");
 		$select->bindParam(':equipe',$equipe);
 		$select->bindParam(':partie',$partie);
 		$select->execute();
 		$select->setFetchMode(PDO::FETCH_ASSOC);
 		$ami = $select->fetchAll();
 
-		$slct = $db->prepare("SELECT loc,id FROM perso WHERE equipe!=:equipe AND n_partie = :partie");
+		$slct = $db->prepare("SELECT loc,id,capa FROM perso WHERE equipe!=:equipe AND n_partie = :partie");
 		$slct->bindParam(':equipe',$equipe);
 		$slct->bindParam(':partie',$partie);
 		$slct->execute();

@@ -10,16 +10,30 @@ try {
 
 // ---- OBSERVATION ----
     if ($_POST['etat']=== 'obs') {
-        $stmt2 = $db->prepare('UPDATE perso SET obs=obs+50, regen=capa*0.25, etat=:etat WHERE id=:id AND n_partie=:partie');
+        
+        $stmt32 = $db->prepare('SELECT obs FROM perso WHERE id=:id AND n_partie=:partie');
+        $stmt32->bindParam(':partie', $_POST['partie']);
+        $stmt32->bindParam(':id', $_POST['id']);
+        $stmt32->execute();
+        $rows2 = $stmt32->fetch(PDO::FETCH_ASSOC);
+        $obs=$rows2["obs"]+50;
+            if ($obs > 150)
+            {
+                $obs = 150;
+            }
+
+        $stmt2 = $db->prepare('UPDATE perso SET obs=:obs, regen=capa*0.10, etat=:etat WHERE id=:id AND n_partie=:partie');
         $stmt2->bindParam(':id', $_POST['id']);
         $stmt2->bindParam(':etat', $_POST['etat']);
         $stmt2->bindParam(':partie', $_POST['partie']);
+        $stmt2->bindParam(':obs', $obs);
         $stmt2->execute();
+
     }
 // ---- ASSAUT ----
     elseif ($_POST['etat'] === 'assaut') {
         $stmt = $db->prepare('SELECT id FROM perso WHERE equipe!=:equipe AND n_partie=:partie AND
-        (loc<->(SELECT loc FROM perso WHERE id=:id))<=18 ORDER BY loc<->(SELECT loc FROM perso WHERE id=:id) LIMIT 1');
+        (loc<->(SELECT loc FROM perso WHERE id=:id))<=18 AND capa > 0 ORDER BY loc<->(SELECT loc FROM perso WHERE id=:id) LIMIT 1');
         $stmt->bindParam(':id', $_POST['id']);
         $stmt->bindParam(':equipe', $_POST['equipe']);
         $stmt->bindParam(':partie', $_POST['partie']);
@@ -32,7 +46,7 @@ try {
                 $ote->bindParam(':partie', $_POST['partie']);
                 $ote->bindParam(':ad', $row['id'], PDO::PARAM_INT);
                 $ote->execute();
-                $stmt2 = $db->prepare('UPDATE perso SET regen=capa*0.25,obs=50,assaut=(SELECT capa FROM perso WHERE id=:ad)/10, etat=:etat WHERE id=:id AND n_partie=:partie');
+                $stmt2 = $db->prepare('UPDATE perso SET regen=capa*0.10,obs=50,assaut=(SELECT capa FROM perso WHERE id=:ad)/10, etat=:etat WHERE id=:id AND n_partie=:partie');
                 $stmt2->bindParam(':id', $_POST['id']);
                 $stmt2->bindParam(':ad', $row['id'], PDO::PARAM_INT);
                 $stmt2->bindParam(':partie', $_POST['partie']);
@@ -49,49 +63,53 @@ try {
           (loc<->(SELECT loc FROM perso WHERE id=:id))<=100 AND
           (loc<->(SELECT loc FROM perso WHERE id=:id))>0 AND
           equipe!=(SELECT equipe FROM perso WHERE id=:id) AND
-          degrees(acos((loc<->(SELECT loc FROM perso WHERE id=:id))/100))>=:capInf AND
-          degrees(acos((loc<->(SELECT loc FROM perso WHERE id=:id))/100))<=:capSup AND
+          ((CAST(270-(degrees(atan2(((Select loc[1] from perso where id =:id)-loc[1]),((Select loc[0] from perso where id=:id)-loc[0])))) as bigint) %360)) >=:capInf AND
+          ((CAST(270-(degrees(atan2(((Select loc[1] from perso where id =:id)-loc[1]),((Select loc[0] from perso where id=:id)-loc[0])))) as bigint) %360))<=:capSup AND
            n_partie=:partie');
-        $stmt->bindParam(':id', $_POST['id']);
         $stmt->bindParam(':partie', $_POST['partie']);
+        $stmt->bindParam(':id', $_POST['id']);
         $stmt->bindParam(':capInf', $capInf);
         $stmt->bindParam(':capSup', $capSup);
         $stmt->execute();
-        $rows = $stmt->fetchAll();
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($rows as $row) {
-            if ($row['id'] !== '') {
-                $up = $db->prepare('UPDATE perso SET tir=30/*round(100000/(loc<->(SELECT loc FROM perso WHERE id=:id)))*/ WHERE id=:ad AND n_partie=:partie');
-                //$up->bindParam(':id', $_POST['id']);
-                $up->bindParam(':partie', $_POST['partie']);
-                $up->bindParam(':ad', $row['id'], PDO::PARAM_INT);
-                $up->execute();
-            }
+            
+            $up = $db->prepare('UPDATE perso SET tir=tir+round(0.01/((loc<->(SELECT loc FROM perso WHERE id=:id AND n_partie=:partie)))) WHERE id=:ad AND n_partie=:partie');
+            //$up = $db->prepare('UPDATE qg SET capa=capa-30 WHERE id=:ad AND n_partie=:partie');
+            $up->bindParam(':partie', $_POST['partie']);
+            $up->bindParam(':ad', $row['id']);
+            $up->bindParam(':id', $_POST['id']);
+            $up->execute();
+    
         }
         $stmt = $db->prepare('SELECT id FROM qg WHERE
           (loc<->(SELECT loc FROM perso WHERE id=:id))<=100 AND
           (loc<->(SELECT loc FROM perso WHERE id=:id))>0 AND
           equipe!=(SELECT equipe FROM perso WHERE id=:id) AND
-          degrees(acos((loc<->(SELECT loc FROM perso WHERE id=:id))/100))>=:capInf AND
-          degrees(acos((loc<->(SELECT loc FROM perso WHERE id=:id))/100))<=:capSup AND
+          ((CAST(270-(degrees(atan2(((Select loc[1] from perso where id =:id)-loc[1]),((Select loc[0] from perso where id=:id)-loc[0])))) as bigint) %360)) >=:capInf AND
+          ((CAST(270-(degrees(atan2(((Select loc[1] from perso where id =:id)-loc[1]),((Select loc[0] from perso where id=:id)-loc[0])))) as bigint) %360))<=:capSup AND
            n_partie=:partie');
         $stmt->bindParam(':partie', $_POST['partie']);
         $stmt->bindParam(':id', $_POST['id']);
         $stmt->bindParam(':capInf', $capInf);
         $stmt->bindParam(':capSup', $capSup);
         $stmt->execute();
-        $rows = $stmt->fetchAll();
-        print_r($rows);
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
         foreach ($rows as $row) {
-          print_r($row);
-            if ($row['id'] !== '') {
-                $up = $db->prepare('UPDATE qg SET capa=capa-30/*round(100000/(loc<->(SELECT loc FROM perso WHERE id=:id AND n_partie=:partie)))*/ WHERE id=:ad AND n_partie=:partie');
-                //$up->bindParam(':id', $_POST['id']);
-                $up->bindParam(':partie', $_POST['partie']);
-                $up->bindParam(':ad', $row['id'], PDO::PARAM_INT);
-                $up->execute();
-            }
+            
+            $up = $db->prepare('UPDATE qg SET capa=capa-round(0.01/((loc<->(SELECT loc FROM perso WHERE id=:id AND n_partie=:partie)))) WHERE id=:ad AND n_partie=:partie');
+            //$up = $db->prepare('UPDATE qg SET capa=capa-30 WHERE id=:ad AND n_partie=:partie');
+            $up->bindParam(':partie', $_POST['partie']);
+            $up->bindParam(':ad', $row['id']);
+            $up->bindParam(':id', $_POST['id']);
+            $up->execute();
+    
         }
-        $stmt2 = $db->prepare('UPDATE perso SET regen=capa*0.25,obs=50, etat=:etat WHERE id=:id AND n_partie=:partie');
+
+        $stmt2 = $db->prepare('UPDATE perso SET regen=capa*0.10,obs=50, etat=:etat WHERE id=:id AND n_partie=:partie');
         $stmt2->bindParam(':id', $_POST['id']);
         $stmt2->bindParam(':etat', $_POST['etat']);
         $stmt2->bindParam(':partie', $_POST['partie']);
@@ -100,7 +118,7 @@ try {
     /* trop puissant: à revoir plus tard
 // ---- PROTECTION ----
     elseif ($_POST['etat'] == 'protec') {
-        $stmt2 = $db->prepare('UPDATE perso SET protec=0.5, regen=capa*0.25,obs=50, etat=:etat WHERE id=:id');
+        $stmt2 = $db->prepare('UPDATE perso SET protec=0.5, regen=capa*0.10,obs=50, etat=:etat WHERE id=:id');
         $stmt2->bindParam(':id', $_POST['id']);
         $stmt2->bindParam(':etat', $_POST['etat']);
         $stmt2->execute();
@@ -108,7 +126,7 @@ try {
     */
 // ---- RECUPERATION ----
     elseif ($_POST['etat'] === 'recup') {
-        $stmt2 = $db->prepare('UPDATE perso SET recup=capa*3,assaut=assaut*10,tir=tir*10,obs=50, etat=:etat WHERE id=:id AND n_partie=:partie');
+        $stmt2 = $db->prepare('UPDATE perso SET recup=capa,assaut=assaut*10,tir=tir*10,obs=50, etat=:etat WHERE id=:id AND n_partie=:partie');
         $stmt2->bindParam(':id', $_POST['id']);
         $stmt2->bindParam(':etat', $_POST['etat']);
         $stmt2->bindParam(':partie', $_POST['partie']);
@@ -132,10 +150,8 @@ try {
         $stmt = $db->prepare('SELECT id FROM perso WHERE n_partie=:partie');
         $stmt->bindParam(':partie', $_POST['partie']);
         $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $rows = $stmt->fetchAll();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         foreach ($rows as $row) {
-
             $stmt32 = $db->prepare('SELECT capa,regen,recup,protec,tir,assaut FROM perso WHERE id=:id AND n_partie=:partie');
             $stmt32->bindParam(':partie', $_POST['partie']);
             $stmt32->bindParam(':id', $row['id']);
@@ -145,6 +161,10 @@ try {
             if ($capa > 100)
             {
                 $capa = 100;
+            }
+            if ($capa < 0)
+            {
+                $capa = 0;
             }
             $stmt = $db->prepare('UPDATE perso SET capa=:capa WHERE id=:id AND n_partie=:partie');
             $stmt->bindParam(':partie', $_POST['partie']);

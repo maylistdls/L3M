@@ -1,3 +1,7 @@
+Depuis le 22 03 2016 
+Correction de divers bugs
+Renfort du serveur pour l'interfacage avec le client
+
 22 03 2016 13h30 15h40
 Solution pour représenter les QG et les batteries sur la carte
 Changement des symboles selon les QG et les Batteries en fonction de l'équipe (QG en forme de blason, Batterie en forme de carré arrondis)
